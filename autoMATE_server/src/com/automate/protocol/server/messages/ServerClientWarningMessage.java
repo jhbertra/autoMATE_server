@@ -5,13 +5,13 @@ import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
-public class ServerWarningMessage extends Message<ServerProtocolParameters> {
+public class ServerClientWarningMessage extends Message<ServerProtocolParameters> {
 
 	public final long warningId;
 	public final long nodeId;
 	public final String message;
 	
-	public ServerWarningMessage(ServerProtocolParameters parameters, long warningId, long nodeId, String message) {
+	public ServerClientWarningMessage(ServerProtocolParameters parameters, long warningId, long nodeId, String message) {
 		super(parameters);
 		if(message == null) {
 			throw new NullPointerException("message was null in ServerWarningMessage");
@@ -40,9 +40,9 @@ public class ServerWarningMessage extends Message<ServerProtocolParameters> {
 	@Override
 	public boolean equals(Object obj) {
 		if(super.equals(obj)) {
-			return 	this.warningId == ((ServerWarningMessage)obj).warningId
-					&& this.nodeId == ((ServerWarningMessage)obj).nodeId
-					&& this.message.equals(((ServerWarningMessage)obj).message);
+			return 	this.warningId == ((ServerClientWarningMessage)obj).warningId
+					&& this.nodeId == ((ServerClientWarningMessage)obj).nodeId
+					&& this.message.equals(((ServerClientWarningMessage)obj).message);
 		} else return false;
 	}
 

@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.automate.protocol.server.ServerProtocolParameters;
-import com.automate.protocol.server.messages.ServerWarningMessage;
+import com.automate.protocol.server.messages.ServerClientWarningMessage;
 
 public class ServerWarningMessageSubParserTest {
 
@@ -101,7 +101,7 @@ public class ServerWarningMessageSubParserTest {
 	@Test
 	public void testProperlyFormattedMessage() throws Exception {
 		subject = new ServerWarningMessageSubParser();
-		ServerWarningMessage expected = new ServerWarningMessage(parameters, 0, 0, "I'm gonna asplode.");
+		ServerClientWarningMessage expected = new ServerClientWarningMessage(parameters, 0, 0, "I'm gonna asplode.");
 		assertEquals(expected, subject.parseXml(xml5));
 	}
 

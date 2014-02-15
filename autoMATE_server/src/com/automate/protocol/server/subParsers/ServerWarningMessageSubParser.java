@@ -8,10 +8,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.automate.protocol.MessageFormatException;
-import com.automate.protocol.server.messages.ServerWarningMessage;
+import com.automate.protocol.server.messages.ServerClientWarningMessage;
 import com.automate.util.xml.XmlFormatException;
 
-public class ServerWarningMessageSubParser extends ServerMessageSubParser<ServerWarningMessage> {
+public class ServerWarningMessageSubParser extends ServerMessageSubParser<ServerClientWarningMessage> {
 
 	private long warningId;
 	private long nodeId;
@@ -24,7 +24,7 @@ public class ServerWarningMessageSubParser extends ServerMessageSubParser<Server
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		if(qName.equals("content")) {
-			this.message = new ServerWarningMessage(parameters, warningId, nodeId, warningMessage);
+			this.message = new ServerClientWarningMessage(parameters, warningId, nodeId, warningMessage);
 		} else {
 			super.endElement(uri, localName, qName);
 		}
@@ -34,7 +34,7 @@ public class ServerWarningMessageSubParser extends ServerMessageSubParser<Server
 	 * @see com.automate.protocol.server.subParsers.ServerMessageSubParser#parseXml(java.lang.String)
 	 */
 	@Override
-	public ServerWarningMessage parseXml(String xml) throws XmlFormatException,
+	public ServerClientWarningMessage parseXml(String xml) throws XmlFormatException,
 			IOException, MessageFormatException, SAXException,
 			ParserConfigurationException {
 		warningId = -1;

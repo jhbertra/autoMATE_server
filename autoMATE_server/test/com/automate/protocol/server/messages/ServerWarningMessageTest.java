@@ -9,17 +9,17 @@ import com.automate.util.xml.XmlFormatException;
 
 public class ServerWarningMessageTest {
 
-	private ServerWarningMessage subject;
+	private ServerClientWarningMessage subject;
 	private ServerProtocolParameters parameters = new ServerProtocolParameters(0, 0, true, "session");
 	
 	@Test(expected = NullPointerException.class)
 	public void testNullMessage() {
-		subject = new ServerWarningMessage(parameters, 0, 0, null);
+		subject = new ServerClientWarningMessage(parameters, 0, 0, null);
 	}
 	
 	@Test
 	public void testToXml() {
-		subject = new ServerWarningMessage(parameters, 0, 0, "I'm about to blow up!");
+		subject = new ServerClientWarningMessage(parameters, 0, 0, "I'm about to blow up!");
 		StringBuilder builder = new StringBuilder();
 		try {
 			subject.toXml(builder, 0);

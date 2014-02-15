@@ -1,16 +1,31 @@
 package com.automate.server.database.models;
 
+/**
+ * Encapsulates a Model element from the database
+ */
 public class Model {
 
+	/**
+	 * This model's uniqe id.
+	 */
 	public final long uid;
-	public final long mnfr_id;
+	/**
+	 * The foreign key for this model's manufacturer.
+	 */
+	public final long manufacturerId;
+	/**
+	 * The url to the information page for this model.
+	 */
 	public final String informationUrl;
+	/**
+	 * The url to the command list spec. of this model.
+	 */
 	public final String commandListUrl;
 	
-	public Model(long uid, long mnfr_id, String informationUrl, String commandListUrl){
+	public Model(long uid, long manufacturerId, String informationUrl, String commandListUrl){
 	
 		this.uid = uid;
-		this.mnfr_id = mnfr_id;
+		this.manufacturerId = manufacturerId;
 		this.informationUrl = informationUrl;
 		this.commandListUrl = commandListUrl;
 	}

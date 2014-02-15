@@ -1,18 +1,39 @@
 package com.automate.server.database.models;
 
+/**
+ * Encapsulates data for a User element from the database.
+ */
 public class User {
 
+	/**
+	 * The numeric uid of this user
+	 */
 	public final long uid;
-	public final String sername;
+	/**
+	 * This user's unique username
+	 */
+	public final String username;
+	/**
+	 * This user's first name
+	 */
 	public final String firstName;
+	/**
+	 * This user's last name.
+	 */
 	public final String lastName;
+	/**
+	 * This user's password.
+	 */
 	public final String password;
+	/**
+	 * This user's email.
+	 */
 	public final String email;
 	
 	public User(long uid, String sername, String firstName, String lastName,
 			String password, String email) {
 		this.uid = uid;
-		this.sername = sername;
+		this.username = sername;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;

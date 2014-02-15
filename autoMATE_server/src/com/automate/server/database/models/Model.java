@@ -21,12 +21,16 @@ public class Model {
 	 * The url to the command list spec. of this model.
 	 */
 	public final String commandListUrl;
+	/**
+	 * The name of the model
+	 */
+	public final String name;
 	
-	public Model(long uid, long manufacturerId, String informationUrl, String commandListUrl){
-	
+	public Model(long uid, long manufacturerId, String informationUrl, String commandListUrl, String name){
 		this.uid = uid;
 		this.manufacturerId = manufacturerId;
 		this.informationUrl = informationUrl;
 		this.commandListUrl = commandListUrl;
+		this.name = name;
 	}
 }

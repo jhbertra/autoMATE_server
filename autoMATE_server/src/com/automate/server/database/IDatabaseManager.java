@@ -2,8 +2,10 @@ package com.automate.server.database;
 
 import java.util.List;
 
-import com.automate.protocol.models.Node;
 import com.automate.server.IManager;
+import com.automate.server.database.models.Manufacturer;
+import com.automate.server.database.models.Model;
+import com.automate.server.database.models.Node;
 import com.automate.server.database.models.User;
 
 /**
@@ -13,8 +15,27 @@ import com.automate.server.database.models.User;
  */
 public interface IDatabaseManager extends IManager {
 
+
+	/*
+	 * User queries.
+	 */
+	User getUserByUsername(String username);
+	User getUserByUid(int userId);
+
+	/*
+	 * Node queries.
+	 */
+	Node getNodeByUid(long nodeId);
 	List<Node> getClientNodeList(String username);
 
-	User getUser(String username);
+	/*.
+	 * Model queries
+	 */
+	Model getModelByUid(int modelId);
+	
+	/*
+	 * Manufacturer queries.
+	 */
+	Manufacturer getManufacturerByUid(long manufacturerId);
 	
 }

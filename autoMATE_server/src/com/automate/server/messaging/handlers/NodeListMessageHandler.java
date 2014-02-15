@@ -1,5 +1,6 @@
 package com.automate.server.messaging.handlers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.automate.protocol.Message;
@@ -32,7 +33,12 @@ public class NodeListMessageHandler implements
 		if(username == null) {
 			return new ServerNodeListMessage(responseParameters, null);
 		} else {
-			List<Node> nodelist = dbManager.getClientNodeList(username);
+			List<com.automate.server.database.models.Node> nodes = dbManager.getClientNodeList(username);
+			
+			List<Node> nodelist = new ArrayList<Node>(nodes.size());
+			for(com.automate.server.database.models.Node node : nodes) {
+				nodelist.add(node.toProtocolNode(dbManager));
+			}
 			return new ServerNodeListMessage(responseParameters, nodelist);
 		}
 	}

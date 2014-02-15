@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.util.List;
 
 import com.automate.protocol.models.Node;
+import com.automate.server.database.models.Manufacturer;
+import com.automate.server.database.models.Model;
 import com.automate.server.database.models.User;
 
 public class DatabaseManager implements IDatabaseManager {
@@ -32,12 +34,39 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
-	public List<Node> getClientNodeList(String username) {
+	public User getUserByUsername(String username) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public User getUser(String username) {
+	public User getUserByUid(int userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public com.automate.server.database.models.Node getNodeByUid(long nodeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Model getModelByUid(int modelId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Manufacturer getManufacturerByUid(long manufacturerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<com.automate.server.database.models.Node> getClientNodeList(
+			String username) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

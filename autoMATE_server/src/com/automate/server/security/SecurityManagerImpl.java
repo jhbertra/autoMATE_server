@@ -32,7 +32,7 @@ public class SecurityManagerImpl implements ISecurityManager {
 
 	@Override
 	public String authenticateClient(String username, String password, String sessionKey, String ipAddress) {
-		User user = dbManager.getUser(username);
+		User user = dbManager.getUserByUsername(username);
 		if(user == null) {
 			return null;
 		}

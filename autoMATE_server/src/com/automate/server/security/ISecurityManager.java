@@ -18,25 +18,31 @@ public interface ISecurityManager extends IManager {
 	 * @param sessionKey - the session key of the message that arrived with the user's credentails
 	 * @return the new session key, null if authentication failed.
 	 */
-	String authenticateClient(String username, String password, String sessionKey, String ipAddress);
+	public String authenticateClient(String username, String password, String sessionKey, String ipAddress);
 
 	/**
 	 * Returns the username of the account associated with a given session key.
 	 * @param sessionKey the session key
 	 * @return the username that owns the session key, or null if no account owns the session key.
 	 */
-	String getUsername(String sessionKey);
+	public String getUsername(String sessionKey);
 
 	/**
 	 * Returns the ip address for the given session.
 	 * @param sessionKey the session key
 	 */
-	String getIpAddress(String sessionKey);
+	public String getIpAddress(String sessionKey);
+	
+	public String getSessionKeyForNode(long nodeId);
 
-	ServerProtocolParameters getResponseParameters(ClientProtocolParameters parameters);
+	public String getSessionKeyForUsername(String username);
 
-	String getSessionKeyForNode(long nodeId);
-
-	String getSessionKeyForUsername(String username);
+	/**
+	 * Validates client parameters.
+	 * 
+	 * @param parameters the parameters that were received.
+	 * @return session-valid
+	 */
+	public boolean validateParameters(ClientProtocolParameters parameters);
 	
 }

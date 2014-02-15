@@ -15,11 +15,14 @@ public interface IMessageHandler<M extends Message<ClientProtocolParameters>, Pa
 
 	/**
 	 * Handle the message upon receipt.
-	 * 
-	 * @param responseParameters protocol parameters for constructing a response Message
+	 * @param minorVersion TODO
+	 * @param majorVersion TODO
+	 * @param sessionValid If the session was valid
 	 * @param message the message received from the client
+	 * 
 	 * @return a response message if response is required by protocol spec.
 	 */
-	public abstract Message<ServerProtocolParameters> handleMessage(ServerProtocolParameters responseParameters, M message, Params params);
+	public abstract Message<ServerProtocolParameters> handleMessage(int minorVersion, int majorVersion, boolean sessionValid, 
+			M message, Params params);
 	
 }

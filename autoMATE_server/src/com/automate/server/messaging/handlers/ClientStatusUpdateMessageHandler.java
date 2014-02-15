@@ -12,13 +12,14 @@ public class ClientStatusUpdateMessageHandler implements
 	ISecurityManager securityManager;
 	
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(ServerProtocolParameters responseParameters,
+	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
+			int majorVersion, boolean sessionValid,
 			ClientStatusUpdateMessage message, Void params) {
 		long nodeId = message.nodeId;
 
 		String sessionKey = securityManager.getSessionKeyForNode(nodeId);
 		
-		return new ServerNodeStatusUpdateMessage(responseParameters, nodeId);
+		return new ServerNodeStatusUpdateMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, sessionKey), nodeId);
 	}
 
 }

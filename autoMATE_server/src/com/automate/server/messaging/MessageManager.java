@@ -42,15 +42,20 @@ public class MessageManager implements IMessageManager {
 	private IncomingClientMessageParser parser;
 	
 	private HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers;
+	private int minorVersion;
+	private int majorVersion;
 	
 	public MessageManager(IDatabaseManager dbManager,
 			ISecurityManager securityManager,
-			IConnectivityManager connectivityManager) {
+			IConnectivityManager connectivityManager,
+			int minorVersion, int majorVersion) {
 		this.dbManager = dbManager;
 		this.securityManager = securityManager;
 		this.connectivityManager = connectivityManager;
 		this.parser = new IncomingClientMessageParser();
 		this.handlers = new HashMap<Message.MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>,?>>();
+		this.minorVersion = minorVersion;
+		this.majorVersion = majorVersion;
 	}
 
 	@Override
@@ -117,8 +122,7 @@ public class MessageManager implements IMessageManager {
 			String xml = lineBuilder.toString();
 			Message<ClientProtocolParameters> message = parser.parse(xml);
 			IMessageHandler handler = handlers.get(message.getMessageType());
-			handler.handleMessage(securityManager.getResponseParameters(message.getParameters()), message, 
-					getParameters(message.getMessageType(), socket.getInetAddress().getHostAddress()));
+			handler.handleMessage(minorVersion, majorVersion, securityManager.validateParameters(message.getParameters()), message, getParameters(message.getMessageType(), socket.getInetAddress().getHostAddress()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (XmlFormatException e) {

@@ -23,9 +23,11 @@ public class NodeListMessageHandler implements
 	}
 
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(
-			ServerProtocolParameters responseParameters,
+	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
+			int majorVersion, boolean sessionValid,
 			ClientNodeListMessage message, Void params) {
+		ServerProtocolParameters responseParameters = new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
+				message.getParameters().sessionKey);
 		String username = securityManager.getUsername(message.getParameters().sessionKey);
 		if(username == null) {
 			return new ServerNodeListMessage(responseParameters, null);

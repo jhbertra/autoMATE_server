@@ -1,23 +1,18 @@
 package com.automate.server.security;
 
 import com.automate.protocol.client.ClientProtocolParameters;
-import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.server.database.IDatabaseManager;
 import com.automate.server.database.models.User;
 
 public class SecurityManagerImpl implements ISecurityManager {
 
-	private int majorVersion, minorVersion;
 	
 	private ISessionManager sessionManager;
 	private IDatabaseManager dbManager;
 	
-	public SecurityManagerImpl(ISessionManager sessionManager, IDatabaseManager dbManager, 
-			int majorVersion, int minorVersion) {
+	public SecurityManagerImpl(ISessionManager sessionManager, IDatabaseManager dbManager) {
 		this.sessionManager = sessionManager;
 		this.dbManager = dbManager;
-		this.majorVersion = majorVersion;
-		this.minorVersion = minorVersion;
 	}
 
 	@Override
@@ -58,15 +53,6 @@ public class SecurityManagerImpl implements ISecurityManager {
 	}
 
 	@Override
-	public ServerProtocolParameters getResponseParameters(ClientProtocolParameters parameters) {
-		if(sessionManager.sessionValid(parameters.sessionKey)) {
-			return new ServerProtocolParameters(majorVersion, minorVersion, true, parameters.sessionKey);
-		} else {
-			return new ServerProtocolParameters(majorVersion, minorVersion, false, parameters.sessionKey);
-		}
-	}
-
-	@Override
 	public String getSessionKeyForNode(long nodeId) {
 		// TODO Auto-generated method stub
 		return null;
@@ -76,6 +62,11 @@ public class SecurityManagerImpl implements ISecurityManager {
 	public String getSessionKeyForUsername(String username) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean validateParameters(ClientProtocolParameters parameters) {
+		return sessionManager.sessionValid(parameters.sessionKey);
 	}
 
 }

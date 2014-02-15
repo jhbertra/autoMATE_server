@@ -24,6 +24,7 @@ import com.automate.server.connectivity.IConnectivityManager;
 import com.automate.server.database.IDatabaseManager;
 import com.automate.server.messaging.handlers.AuthenticationMessageHandler;
 import com.automate.server.messaging.handlers.AuthenticationMessageHandlerParams;
+import com.automate.server.messaging.handlers.IMessageHandler;
 import com.automate.server.messaging.handlers.NodeListMessageHandler;
 import com.automate.server.messaging.handlers.PingMessageHandler;
 import com.automate.server.security.ISecurityManager;

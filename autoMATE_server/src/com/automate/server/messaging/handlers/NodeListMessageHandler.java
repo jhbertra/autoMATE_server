@@ -8,7 +8,6 @@ import com.automate.protocol.models.Node;
 import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.protocol.server.messages.ServerNodeListMessage;
 import com.automate.server.database.IDatabaseManager;
-import com.automate.server.messaging.IMessageHandler;
 import com.automate.server.security.ISecurityManager;
 
 public class NodeListMessageHandler implements

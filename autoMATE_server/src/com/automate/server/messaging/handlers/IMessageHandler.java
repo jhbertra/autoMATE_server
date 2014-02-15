@@ -1,4 +1,4 @@
-package com.automate.server.messaging;
+package com.automate.server.messaging.handlers;
 
 import com.automate.protocol.Message;
 import com.automate.protocol.client.ClientProtocolParameters;

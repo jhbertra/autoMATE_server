@@ -41,7 +41,36 @@ public class ClientCommandMessageHandler implements IMessageHandler<ClientComman
 	}
 
 	/**
-	 * Handles a {@link ClientCommandMessage}.
+	 * Handles a {@link ClientCommandMessage}.  Returns the following messages under the corresponding circumstances:<br />
+	 * <table border="1">
+	 * <tr>
+	 *	<th>Condition</th>
+	 *	<th>Returned message</th>
+	 * </tr>
+	 * <tr>
+	 *	<td>The node specified doesn't exist</td>
+	 *	<td>{@link ServerClientCommandMessage} with responseCode == 400, message == "INVALID NODE ID"</td>
+	 * </tr>
+	 * <tr>
+	 *	<td>The node doesn't belong to the user</td>
+	 *	<td>{@link ServerClientCommandMessage} with responseCode == 405, message == "NODE NOT OWNED BY USER"</td>
+	 * </tr>
+	 * <tr>
+	 *	<td>The node is owned by the user, but is offline</td>
+	 *	<td>{@link ServerClientCommandMessage} with responseCode == 404, message == "NODE OFFLINE"</td>
+	 * </tr>
+	 * <tr>
+	 *	<td>The node is owned by the user, and is online</td>
+	 *	<td>{@link ServerNodeCommandMessage} that forwards the contents of the original message to the node.
+	 * </tr>
+	 * <tr>
+	 *	<td>An error occurs while processing the message</td>
+	 *	<td>{@link ServerClientCommandMessage} with responseCode == 500, message == "INTERNAL SERVER ERROR"</td>
+	 * </tr>
+	 * </table>
+	 * 
+	 * @return a response message, as specified above.
+	 * @throws NullPointerException if message is null.
 	 */
 	@Override
 	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid, 

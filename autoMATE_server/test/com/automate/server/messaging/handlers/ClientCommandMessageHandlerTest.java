@@ -60,7 +60,7 @@ public class ClientCommandMessageHandlerTest {
 		context.checking(new Expectations() {{
 		}});
 		try {
-			subject.handleMessage(1, 0, true, null, null);
+			subject.handleMessage(1, 0, true, null, new ClientToNodeMessageHandlerParams(0));
 		} finally {
 			context.assertIsSatisfied();
 		}
@@ -77,7 +77,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 400, "INVALID NODE ID");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -92,7 +92,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 500, "INTERNAL SERVER ERROR");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -108,7 +108,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 500, "INTERNAL SERVER ERROR");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -126,7 +126,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 405, "NODE NOT OWNED BY USER");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -144,7 +144,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 500, "INTERNAL SERVER ERROR");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -161,7 +161,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 500, "INTERNAL SERVER ERROR");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -179,7 +179,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 405, "NODE NOT OWNED BY USER");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -197,7 +197,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "nodeSession");
 		ServerNodeCommandMessage expected = new ServerNodeCommandMessage(responseParameters, 0, "Turn on", 0, null);
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}
@@ -215,7 +215,7 @@ public class ClientCommandMessageHandlerTest {
 		
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(1, 0, true, "session");
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(responseParameters, 0, 404, "NODE OFFLINE");
-		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, null);
+		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, message, new ClientToNodeMessageHandlerParams(0));
 		context.assertIsSatisfied();
 		assertEquals(expected, actual);
 	}

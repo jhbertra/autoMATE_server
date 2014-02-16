@@ -8,10 +8,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.automate.protocol.MessageFormatException;
-import com.automate.protocol.server.messages.ServerCommandMessage;
+import com.automate.protocol.server.messages.ServerClientCommandMessage;
 import com.automate.util.xml.XmlFormatException;
 
-public class ServerCommandMessageSubParser extends ServerMessageSubParser<ServerCommandMessage> {
+public class ServerCommandMessageSubParser extends ServerMessageSubParser<ServerClientCommandMessage> {
 	
 	private long commandId;
 	private int responseCode;
@@ -21,7 +21,7 @@ public class ServerCommandMessageSubParser extends ServerMessageSubParser<Server
 	 * @see com.automate.protocol.server.subParsers.ServerMessageSubParser#parseXml(java.lang.String)
 	 */
 	@Override
-	public ServerCommandMessage parseXml(String xml) throws XmlFormatException,
+	public ServerClientCommandMessage parseXml(String xml) throws XmlFormatException,
 			IOException, MessageFormatException, SAXException,
 			ParserConfigurationException {
 		commandId = 0;
@@ -37,7 +37,7 @@ public class ServerCommandMessageSubParser extends ServerMessageSubParser<Server
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		if(qName.equals("content")) {
-			this.message = new ServerCommandMessage(parameters, commandId, responseCode, commandMessage);
+			this.message = new ServerClientCommandMessage(parameters, commandId, responseCode, commandMessage);
 		} else {
 			super.endElement(uri, localName, qName);
 		}

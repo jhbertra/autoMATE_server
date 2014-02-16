@@ -9,23 +9,23 @@ import com.automate.util.xml.XmlFormatException;
 
 public class ServerCommandMessageTest {
 
-	private ServerCommandMessage subject;
+	private ServerClientCommandMessage subject;
 	
 	private ServerProtocolParameters parameters = new ServerProtocolParameters(0, 0, true, "session");
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void testNullArgs() {
-		subject = new ServerCommandMessage(parameters, -1, 0, null);
+		subject = new ServerClientCommandMessage(parameters, -1, 0, null);
 	}
 	
 	@Test
 	public void testNullMssage() {
-		subject = new ServerCommandMessage(parameters, 0, 0, null);
+		subject = new ServerClientCommandMessage(parameters, 0, 0, null);
 	}
 	
 	@Test
 	public void testToXmlNoNulls() {
-		subject = new ServerCommandMessage(parameters, 0, 200, "message");
+		subject = new ServerClientCommandMessage(parameters, 0, 200, "message");
 		StringBuilder builder = new StringBuilder();
 		try {
 			subject.toXml(builder, 0);
@@ -50,7 +50,7 @@ public class ServerCommandMessageTest {
 	
 	@Test
 	public void testToXmlNullMessage() {
-		subject = new ServerCommandMessage(parameters, 0, 200, null);
+		subject = new ServerClientCommandMessage(parameters, 0, 200, null);
 		StringBuilder builder = new StringBuilder();
 		try {
 			subject.toXml(builder, 0);

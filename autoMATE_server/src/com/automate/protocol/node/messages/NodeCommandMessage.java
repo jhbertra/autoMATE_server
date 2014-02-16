@@ -1,17 +1,17 @@
-package com.automate.protocol.server.messages;
+package com.automate.protocol.node.messages;
 
 import com.automate.protocol.Message;
-import com.automate.protocol.server.ServerProtocolParameters;
+import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
-public class ServerCommandMessage extends Message<ServerProtocolParameters> {
+public class NodeCommandMessage extends Message<ClientProtocolParameters> {
 
 	public final long commandId;
 	public final int responseCode;
 	public final String message;
 	
-	public ServerCommandMessage(ServerProtocolParameters parameters, long commandId, int responseCode, String message) {
+	public NodeCommandMessage(ClientProtocolParameters parameters, long commandId, int responseCode, String message) {
 		super(parameters);
 		if(commandId < 0) {
 			throw new IllegalArgumentException("command-id is negative.");
@@ -46,11 +46,11 @@ public class ServerCommandMessage extends Message<ServerProtocolParameters> {
 	@Override
 	public boolean equals(Object obj) {
 		if(super.equals(obj)) {
-			return	this.commandId == ((ServerCommandMessage)obj).commandId
-					&& this.responseCode == ((ServerCommandMessage)obj).responseCode
+			return	this.commandId == ((NodeCommandMessage)obj).commandId
+					&& this.responseCode == ((NodeCommandMessage)obj).responseCode
 					&& (this.message == null ? 
-						((ServerCommandMessage)obj).message == null 
-						: this.message.equals(((ServerCommandMessage)obj).message));
+						((NodeCommandMessage)obj).message == null 
+						: this.message.equals(((NodeCommandMessage)obj).message));
 		} else return false;
 	}
 

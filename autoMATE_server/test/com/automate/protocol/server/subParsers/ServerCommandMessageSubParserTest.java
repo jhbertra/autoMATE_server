@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.automate.protocol.server.ServerProtocolParameters;
-import com.automate.protocol.server.messages.ServerCommandMessage;
+import com.automate.protocol.server.messages.ServerClientCommandMessage;
 
 public class ServerCommandMessageSubParserTest {
 
@@ -95,14 +95,14 @@ public class ServerCommandMessageSubParserTest {
 	@Test
 	public void testProperlyFormattedMessageMessage() throws Exception {
 		subject = new ServerCommandMessageSubParser();
-		ServerCommandMessage expected = new ServerCommandMessage(parameters, 0, 200, null);
+		ServerClientCommandMessage expected = new ServerClientCommandMessage(parameters, 0, 200, null);
 		assertEquals(expected, subject.parseXml(xml4));
 	}
 	
 	@Test
 	public void testProperlyFormattedMessageWithMessage() throws Exception {
 		subject = new ServerCommandMessageSubParser();
-		ServerCommandMessage expected = new ServerCommandMessage(parameters, 0, 200, "command succeeded!");
+		ServerClientCommandMessage expected = new ServerClientCommandMessage(parameters, 0, 200, "command succeeded!");
 		assertEquals(expected, subject.parseXml(xml5));
 	}
 

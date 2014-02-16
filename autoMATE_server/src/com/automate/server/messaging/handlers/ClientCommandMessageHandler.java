@@ -9,8 +9,6 @@ import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.protocol.server.messages.ServerClientCommandMessage;
 import com.automate.protocol.server.messages.ServerNodeCommandMessage;
 import com.automate.server.database.IDatabaseManager;
-import com.automate.server.database.models.Node;
-import com.automate.server.database.models.User;
 import com.automate.server.security.ISecurityManager;
 
 /**
@@ -18,10 +16,12 @@ import com.automate.server.security.ISecurityManager;
  * @author jamie.bertram
  *
  */
-public class ClientCommandMessageHandler implements IMessageHandler<ClientCommandMessage, Void> {
+public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<ClientCommandMessage> {
 
-	private IDatabaseManager dbManager;
-	private ISecurityManager securityManager;
+	private long commandId;
+	private String commandName;
+	private long nodeId;
+	private List<CommandArgument<?>> args;
 
 	/**
 	 * Creates a new {@link ClientCommandMessageHandler}
@@ -30,87 +30,76 @@ public class ClientCommandMessageHandler implements IMessageHandler<ClientComman
 	 */
 	public ClientCommandMessageHandler(IDatabaseManager dbManager,
 			ISecurityManager securityManager) {
-		super();
-		if(dbManager == null) {
-			throw new NullPointerException("dbManager was null.");
-		} else if(securityManager == null) {
-			throw new NullPointerException("securityManager was null.");
-		}
-		this.dbManager = dbManager;
-		this.securityManager = securityManager;
+		super(dbManager, securityManager);
+	}
+	
+	@Override
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid,
+			ClientCommandMessage message, ClientToNodeMessageHandlerParams params) {
+		commandId = message.commandId;
+		commandName = message.name;
+		nodeId = message.nodeId;
+		args = message.args;
+		
+		Message<ServerProtocolParameters> retValue =  super.handleMessage(majorVersion, minorVersion, sessionValid, message, params);
+		
+		commandId = -1;
+		commandName = null;
+		nodeId = -1;
+		args = null;
+		
+		return retValue;
+	}
+
+
+
+	/**
+	 * @return a {@link ServerClientCommandMessage} with responseCode == 400, message == "INVALID NODE ID"
+	 */
+	@Override
+	protected Message<ServerProtocolParameters> getNonExistentNodeMessage(int majorVersion, int minorVersion, boolean sessionValid, 
+			ClientCommandMessage message) {
+		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
+				message.getParameters().sessionKey), commandId, 400, "INVALID NODE ID");
 	}
 
 	/**
-	 * Handles a {@link ClientCommandMessage}.  Returns the following messages under the corresponding circumstances:<br />
-	 * <table border="1">
-	 * <tr>
-	 *	<th>Condition</th>
-	 *	<th>Returned message</th>
-	 * </tr>
-	 * <tr>
-	 *	<td>The node specified doesn't exist</td>
-	 *	<td>{@link ServerClientCommandMessage} with responseCode == 400, message == "INVALID NODE ID"</td>
-	 * </tr>
-	 * <tr>
-	 *	<td>The node doesn't belong to the user</td>
-	 *	<td>{@link ServerClientCommandMessage} with responseCode == 405, message == "NODE NOT OWNED BY USER"</td>
-	 * </tr>
-	 * <tr>
-	 *	<td>The node is owned by the user, but is offline</td>
-	 *	<td>{@link ServerClientCommandMessage} with responseCode == 404, message == "NODE OFFLINE"</td>
-	 * </tr>
-	 * <tr>
-	 *	<td>The node is owned by the user, and is online</td>
-	 *	<td>{@link ServerNodeCommandMessage} that forwards the contents of the original message to the node.
-	 * </tr>
-	 * <tr>
-	 *	<td>An error occurs while processing the message</td>
-	 *	<td>{@link ServerClientCommandMessage} with responseCode == 500, message == "INTERNAL SERVER ERROR"</td>
-	 * </tr>
-	 * </table>
-	 * 
-	 * @return a response message, as specified above.
-	 * @throws NullPointerException if message is null.
+	 * @return a {@link ServerClientCommandMessage} with responseCode == 405, message == "NODE NOT OWNED BY USER"
 	 */
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid, 
-			ClientCommandMessage message, Void params) {
-		if(message == null) {
-			throw new NullPointerException("message was null.");
-		}
-		long nodeId = message.nodeId;
-		String commandName = message.name;
-		long commandId = message.commandId;
-		List<CommandArgument<?>> args = message.args;
+	protected Message<ServerProtocolParameters> getNotOwnedNodeMessage(int majorVersion,	int minorVersion, boolean sessionValid, 
+			ClientCommandMessage message) {
+		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
+				message.getParameters().sessionKey), commandId, 405, "NODE NOT OWNED BY USER");
+	}
 
-		try {
-			String sessionKey = securityManager.getSessionKeyForNode(nodeId);
-			Node node = dbManager.getNodeByUid(nodeId);
+	/**
+	 * @return a {@link ServerClientCommandMessage} with responseCode == 404, message == "NODE OFFLINE"
+	 */
+	@Override
+	protected Message<ServerProtocolParameters> getNodeOfflineMessage(int majorVersion, int minorVersion, boolean sessionValid, 
+			ClientCommandMessage message) {
+		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
+				message.getParameters().sessionKey), commandId, 404, "NODE OFFLINE");
+	}
 
-			if(node == null) {  			// the node does not exist
-				return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-						message.getParameters().sessionKey), commandId, 400, "INVALID NODE ID");
+	/**
+	 * @return a {@link ServerNodeCommandMessage} that forwards the contents of the original message to the node.
+	 */
+	@Override
+	protected Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid, 
+			ClientCommandMessage message, String nodeSessionKey) {
+		return new ServerNodeCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, nodeSessionKey), 
+				nodeId, commandName, commandId, args);
+	}
 
-			} else { 						// the node exists...
-				String username = securityManager.getUsername(message.getParameters().sessionKey);
-				User user = dbManager.getUserByUsername(username);
-
-				if(node.userId != user.uid) { 		// ...but does not belong to the user.
-					return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-							message.getParameters().sessionKey), commandId, 405, "NODE NOT OWNED BY USER");
-
-				} else if(sessionKey == null || sessionKey.isEmpty()) { 	// ...belongs to the user, but is not online.
-					return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-							message.getParameters().sessionKey), commandId, 404, "NODE OFFLINE");
-
-				} else { 							// ..and is online, available for receiving commands.
-					return new ServerNodeCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, sessionKey), 
-							nodeId, commandName, commandId, args);
-				}
-			}
-		} catch (Exception e) {
-			return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-					message.getParameters().sessionKey), commandId, 500, "INTERNAL SERVER ERROR");
-		}
+	/**
+	 * @return a {@link ServerClientCommandMessage} with responseCode == 500, message == "INTERNAL SERVER ERROR"
+	 */
+	@Override
+	protected Message<ServerProtocolParameters> getErrorMessage(int majorVersion, int minorVersion, boolean sessionValid, 
+			ClientCommandMessage message) {
+		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
+				message.getParameters().sessionKey), commandId, 500, "INTERNAL SERVER ERROR");
 	}
 }

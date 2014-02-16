@@ -21,7 +21,7 @@ import com.automate.server.security.ISecurityManager;
 
 public class ClientCommandMessageHandlerTest {
 
-	private ClientCommandMessageHandler subject;
+	private ClientToNodeMessageHandler subject;
 	private IDatabaseManager dbManager;
 	private ISecurityManager securityManager;
 	private Mockery context;

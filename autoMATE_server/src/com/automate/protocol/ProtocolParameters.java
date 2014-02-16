@@ -47,5 +47,12 @@ public abstract class ProtocolParameters extends XmlConvertible {
 					&& ((ProtocolParameters) obj).minorVersion == this.minorVersion;
 		} else return false;
 	}
+
+	@Override
+	public String toString() {
+		return "Protocol version: " + majorVersion + "." + minorVersion + "\n";
+	}
+	
+	
 	
 }

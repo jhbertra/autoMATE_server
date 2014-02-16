@@ -19,7 +19,7 @@ public class ClientCommandMessageHandler implements IMessageHandler<ClientComman
 	private ISecurityManager securityManager;
 	
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion, int majorVersion, boolean sessionValid, 
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid, 
 			ClientCommandMessage message, Void params) {
 		 long nodeId = message.nodeId;
 		 String commandName = message.name;

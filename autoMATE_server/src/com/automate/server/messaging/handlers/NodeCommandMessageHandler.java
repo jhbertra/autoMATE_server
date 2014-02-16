@@ -15,7 +15,7 @@ public class NodeCommandMessageHandler implements IMessageHandler<NodeCommandMes
 	private ISecurityManager securityManager;
 	
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion, int majorVersion, boolean sessionValid, 
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid, 
 			NodeCommandMessage message, Void params) {
 		long commandId = message.commandId;
 		String resultMessage = message.message;

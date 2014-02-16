@@ -40,5 +40,10 @@ public class ServerProtocolParameters extends ProtocolParameters {
 					&& this.sessionKey.equals(((ServerProtocolParameters)obj).sessionKey);
 		} else return false;
 	}
+
+	@Override
+	public String toString() {
+		return "serverProtocolParameters:\n" + "session-key: " + sessionKey + "\n" + "session-valid: " + sessionValid + "\n" + super.toString();
+	}
 	
 }

@@ -85,4 +85,20 @@ public class ClientCommandMessage extends Message<ClientProtocolParameters> {
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		String argsString;
+		if(args == null || args.isEmpty()) {
+			argsString = "";
+		} else {
+			StringBuilder argsSb = new StringBuilder();
+			for(CommandArgument<?> arg : args) {
+				argsSb.append(arg);
+				argsSb.append('\n');
+			}
+			argsString = argsSb.toString();
+		}
+		return super.toString() + "\nClientCommandMessage:\nnodeId: " + nodeId + "\nname: " + name + "\ncommandId: " + commandId + "\nargs: " + argsString;
+	}
+
 }

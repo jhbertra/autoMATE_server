@@ -85,4 +85,10 @@ public class Status<T> extends XmlConvertible {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getName() + ":\ncomponenet-name: " + name + "\ntype: " + type + "\nvalue: " + value;
+	}
+	
+
 }

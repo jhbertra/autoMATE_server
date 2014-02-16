@@ -52,4 +52,20 @@ public class ServerClientStatusUpdateMessage extends Message<ServerProtocolParam
 						: this.statuses.equals(((ServerClientStatusUpdateMessage)obj).statuses));
 		} else return false;
 	}
+
+	@Override
+	public String toString() {
+		String statusesString;
+		if(statuses == null || statuses.isEmpty()) {
+			statusesString = "";
+		} else {
+			StringBuilder statusesSb = new StringBuilder();
+			for(Status<?> status : statuses) {
+				statusesSb.append(status);
+				statusesSb.append('\n');
+			}
+			statusesString = statusesSb.toString();
+		}
+		return super.toString() + "\nServerClientStatusUpdateMessage:\nnodeId: " + nodeId + "\nstatuses: " + statusesString;
+	}
 }

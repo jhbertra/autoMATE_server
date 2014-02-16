@@ -46,4 +46,9 @@ public class ServerClientWarningMessage extends Message<ServerProtocolParameters
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nServerClientWarningMessage:\nnodeId: " + nodeId + "\nwarningId: " + warningId + "\nmessage: " + message;
+	}
+
 }

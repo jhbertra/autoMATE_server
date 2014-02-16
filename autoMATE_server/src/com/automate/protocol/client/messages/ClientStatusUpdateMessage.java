@@ -34,4 +34,9 @@ public class ClientStatusUpdateMessage extends Message<ClientProtocolParameters>
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nClientStatusUpdateMessage:\nnodeId: " + nodeId;
+	}
+
 }

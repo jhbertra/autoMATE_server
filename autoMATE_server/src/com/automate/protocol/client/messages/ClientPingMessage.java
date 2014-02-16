@@ -18,5 +18,10 @@ public class ClientPingMessage extends Message<ClientProtocolParameters> {
 	public MessageType getMessageType() {
 		return MessageType.PING;
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + "\nClientPingMessage";
+	}
 	
 }

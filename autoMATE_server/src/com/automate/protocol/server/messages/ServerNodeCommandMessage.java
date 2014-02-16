@@ -85,4 +85,21 @@ public class ServerNodeCommandMessage extends Message<ServerProtocolParameters> 
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		String argsString;
+		if(args == null || args.isEmpty()) {
+			argsString = "";
+		} else {
+			StringBuilder argsSb = new StringBuilder();
+			for(CommandArgument<?> arg : args) {
+				argsSb.append(arg);
+				argsSb.append('\n');
+			}
+			argsString = argsSb.toString();
+		}
+		return super.toString() + "\nServerNodeCommandMessage:\nnodeId: " + nodeId + "\nname: " + name + "\ncommandId: " 
+		+ commandId + "\nnargs: " + argsString;
+	}
+
 }

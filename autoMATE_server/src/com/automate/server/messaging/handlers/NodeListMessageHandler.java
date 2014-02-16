@@ -24,8 +24,8 @@ public class NodeListMessageHandler implements
 	}
 
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
-			int majorVersion, boolean sessionValid,
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion,
+			int minorVersion, boolean sessionValid,
 			ClientNodeListMessage message, Void params) {
 		ServerProtocolParameters responseParameters = new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
 				message.getParameters().sessionKey);

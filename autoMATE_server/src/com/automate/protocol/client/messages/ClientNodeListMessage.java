@@ -18,5 +18,10 @@ public class ClientNodeListMessage extends Message <ClientProtocolParameters> {
 	public MessageType getMessageType() {
 		return MessageType.NODE_LIST;
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + "\nClientNodeListMessage";
+	}
 	
 }

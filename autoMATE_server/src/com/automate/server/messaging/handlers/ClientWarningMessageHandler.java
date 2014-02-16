@@ -16,8 +16,8 @@ public class ClientWarningMessageHandler implements IMessageHandler<ClientWarnin
 	}
 
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
-			int majorVersion, boolean sessionValid, ClientWarningMessage message,
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion,
+			int minorVersion, boolean sessionValid, ClientWarningMessage message,
 			Void params) {
 		synchronized (pendingWarnings) {
 			pendingWarnings.remove(message.warningId);

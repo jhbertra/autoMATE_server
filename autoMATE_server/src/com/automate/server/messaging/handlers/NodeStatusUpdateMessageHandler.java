@@ -22,8 +22,8 @@ public class NodeStatusUpdateMessageHandler implements IMessageHandler<NodeStatu
 	}
 
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
-			int majorVersion, boolean sessionValid,
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion,
+			int minorVersion, boolean sessionValid,
 			NodeStatusUpdateMessage message, Void params) {
 		Node node = dbManager.getNodeByUid(message.nodeId);
 		User user = dbManager.getUserByUid(node.userId);

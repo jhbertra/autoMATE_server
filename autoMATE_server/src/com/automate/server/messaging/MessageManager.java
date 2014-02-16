@@ -122,7 +122,7 @@ public class MessageManager implements IMessageManager {
 			String xml = lineBuilder.toString();
 			Message<ClientProtocolParameters> message = parser.parse(xml);
 			IMessageHandler handler = handlers.get(message.getMessageType());
-			handler.handleMessage(minorVersion, majorVersion, securityManager.validateParameters(message.getParameters()), message, getParameters(message.getMessageType(), socket.getInetAddress().getHostAddress()));
+			handler.handleMessage(majorVersion, minorVersion, securityManager.validateParameters(message.getParameters()), message, getParameters(message.getMessageType(), socket.getInetAddress().getHostAddress()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (XmlFormatException e) {

@@ -51,5 +51,11 @@ public class Node extends XmlConvertible {
 					&& commandListUrl.equals(((Node) obj).commandListUrl);
 		} else return false;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getName() + "\nname: " + name + "\nid: " + id + "\nmanufacturerCode: " + manufacturerCode + "\nmodel: " + 
+				model + "\nmaxVersion: " + maxVersion + "\ninfoUrl: " + infoUrl+ "\ncommandListUrl: " + commandListUrl;
+	}
 	
 }

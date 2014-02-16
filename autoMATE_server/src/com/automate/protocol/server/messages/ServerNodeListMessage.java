@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.automate.protocol.Message;
 import com.automate.protocol.models.Node;
+import com.automate.protocol.models.Status;
 import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.util.xml.XmlFormatException;
 
@@ -46,6 +47,22 @@ public class ServerNodeListMessage extends Message <ServerProtocolParameters> {
 						(((ServerNodeListMessage)obj).nodes == null || ((ServerNodeListMessage)obj).nodes.isEmpty()) 
 						: this.nodes.equals(((ServerNodeListMessage)obj).nodes));
 		} else return false;
+	}
+
+	@Override
+	public String toString() {
+		String nodesString;
+		if(nodes == null || nodes.isEmpty()) {
+			nodesString = "";
+		} else {
+			StringBuilder nodesSb = new StringBuilder();
+			for(Node node : nodes) {
+				nodesSb.append(node);
+				nodesSb.append('\n');
+			}
+			nodesString = nodesSb.toString();
+		}
+		return super.toString() + "\nServerNodeListMessage:\nnodes:\n" + nodesString;
 	}
 
 }

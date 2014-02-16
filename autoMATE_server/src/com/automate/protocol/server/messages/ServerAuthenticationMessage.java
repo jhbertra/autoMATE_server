@@ -56,5 +56,11 @@ public class ServerAuthenticationMessage extends Message <ServerProtocolParamete
 					&& this.sessionKey.equals(((ServerAuthenticationMessage)obj).sessionKey);
 		} else return false;
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + "\nServerAuthenticationMessage:\nusername: " + username + "\nresponseCode: " + responseCode
+				+ "\nresponse: " + response + "\nsessionKey: " + sessionKey;
+	}
 	
 }

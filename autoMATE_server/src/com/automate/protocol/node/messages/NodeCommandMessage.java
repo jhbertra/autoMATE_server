@@ -54,4 +54,10 @@ public class NodeCommandMessage extends Message<ClientProtocolParameters> {
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nNodeCommandMessage:\n" + "\ncommandId: " + commandId + "\nresponseCode: " + 
+					responseCode + "\nmessage: " + message;
+	}
+
 }

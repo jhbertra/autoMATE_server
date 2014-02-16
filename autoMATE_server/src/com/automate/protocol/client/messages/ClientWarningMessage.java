@@ -34,4 +34,9 @@ public class ClientWarningMessage extends Message<ClientProtocolParameters> {
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nClientWarningMessage:\nwarningId: " + warningId;
+	}
+
 }

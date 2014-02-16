@@ -35,4 +35,9 @@ public class ServerNodeStatusUpdateMessage extends Message<ServerProtocolParamet
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nServerNodeStatusUpdateMessage:\nnodeId: " + nodeId;
+	}
+
 }

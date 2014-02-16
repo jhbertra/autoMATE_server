@@ -42,4 +42,9 @@ public class ClientAuthenticationMessage extends Message <ClientProtocolParamete
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nClientAuthenticationMessage:\nusername: " + username + "\npassword: " + password;
+	}
+
 }

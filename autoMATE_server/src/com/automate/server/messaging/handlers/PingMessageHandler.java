@@ -14,8 +14,8 @@ public class PingMessageHandler implements IMessageHandler<ClientPingMessage, Vo
 	}
 
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
-			int majorVersion, boolean sessionValid, ClientPingMessage message,
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion,
+			int minorVersion, boolean sessionValid, ClientPingMessage message,
 			Void params) {
 		connectivityManager.handleClientPing(message.getParameters().sessionKey);
 		return null;

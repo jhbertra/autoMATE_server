@@ -12,8 +12,8 @@ public class ClientStatusUpdateMessageHandler implements
 	ISecurityManager securityManager;
 	
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
-			int majorVersion, boolean sessionValid,
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion,
+			int minorVersion, boolean sessionValid,
 			ClientStatusUpdateMessage message, Void params) {
 		long nodeId = message.nodeId;
 

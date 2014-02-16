@@ -96,5 +96,10 @@ public abstract class Message <P extends ProtocolParameters> extends XmlConverti
 			return ((Message<?>)obj).parameters.equals(this.parameters);
 		} else return false;
 	}
+
+	@Override
+	public String toString() {
+		return "Parameters:\n" + parameters.toString() + "\n";
+	}
 	
 }

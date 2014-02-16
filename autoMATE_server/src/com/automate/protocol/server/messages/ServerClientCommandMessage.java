@@ -54,4 +54,10 @@ public class ServerClientCommandMessage extends Message<ServerProtocolParameters
 		} else return false;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + "\nServerClientCommandMessage:\n" + "\ncommandId: " + commandId + "\nresponseCode: " + 
+					responseCode + "\nmessage: " + message;
+	}
+
 }

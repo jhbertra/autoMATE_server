@@ -26,8 +26,8 @@ public class NodeWarningMessageHandler	implements IMessageHandler<NodeWarningMes
 	}
 
 	@Override
-	public Message<ServerProtocolParameters> handleMessage(int minorVersion,
-			int majorVersion, boolean sessionValid, NodeWarningMessage message,
+	public Message<ServerProtocolParameters> handleMessage(int majorVersion,
+			int minorVersion, boolean sessionValid, NodeWarningMessage message,
 			Void params) {
 		long warningId;
 		synchronized (pendingWarnings) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.automate.protocol.Message;
 import com.automate.protocol.client.ClientProtocolParameters;
+import com.automate.protocol.models.CommandArgument;
 import com.automate.protocol.models.Status;
 import com.automate.protocol.server.messages.ServerClientStatusUpdateMessage;
 import com.automate.util.xml.Attribute;
@@ -52,6 +53,22 @@ public class NodeStatusUpdateMessage extends Message<ClientProtocolParameters> {
 						(((ServerClientStatusUpdateMessage)obj).statuses == null || ((ServerClientStatusUpdateMessage)obj).statuses.isEmpty()) 
 						: this.statuses.equals(((ServerClientStatusUpdateMessage)obj).statuses));
 		} else return false;
+	}
+
+	@Override
+	public String toString() {
+		String statusesString;
+		if(statuses == null || statuses.isEmpty()) {
+			statusesString = "";
+		} else {
+			StringBuilder statusesSb = new StringBuilder();
+			for(Status<?> status : statuses) {
+				statusesSb.append(status);
+				statusesSb.append('\n');
+			}
+			statusesString = statusesSb.toString();
+		}
+		return super.toString() + "\nNodeStatusUpdateMessage:\nnodeId: " + nodeId + "\nstatuses: " + statusesString;
 	}
 	
 }

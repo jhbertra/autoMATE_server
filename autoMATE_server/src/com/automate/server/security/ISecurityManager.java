@@ -37,6 +37,8 @@ public interface ISecurityManager extends IManager {
 
 	public String getSessionKeyForUsername(String username);
 
+	public long getNodeId(String sessionKey);
+	
 	/**
 	 * Validates client parameters.
 	 * 
@@ -44,5 +46,6 @@ public interface ISecurityManager extends IManager {
 	 * @return session-valid
 	 */
 	public boolean validateParameters(ClientProtocolParameters parameters);
+
 	
 }

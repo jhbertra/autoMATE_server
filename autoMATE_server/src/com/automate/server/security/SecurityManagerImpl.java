@@ -69,4 +69,10 @@ public class SecurityManagerImpl implements ISecurityManager {
 		return sessionManager.sessionValid(parameters.sessionKey);
 	}
 
+	@Override
+	public long getNodeId(String sessionKey) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

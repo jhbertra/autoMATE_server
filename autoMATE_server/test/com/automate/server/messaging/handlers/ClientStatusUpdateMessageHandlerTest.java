@@ -41,21 +41,6 @@ public class ClientStatusUpdateMessageHandlerTest {
 	public void tearDown() throws Exception {
 		
 	}
-
-	@Test(expected = NullPointerException.class)
-	public void testNullContructorArgs() {
-		subject = new ClientStatusUpdateMessageHandler(null, null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testNullDbManager() {
-		subject = new ClientStatusUpdateMessageHandler(null, securityManager);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testNullSecurityManager() {
-		subject = new ClientStatusUpdateMessageHandler(dbManager, null);
-	}
 	
 	@Test
 	public void testGetErrorMessage() {

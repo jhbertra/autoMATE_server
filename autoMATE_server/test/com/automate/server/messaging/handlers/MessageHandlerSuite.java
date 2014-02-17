@@ -7,7 +7,12 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(value = {
 		AuthenticationMessageHandlerTest.class,
-		ClientCommandMessageHandlerTest.class})
+		ClientCommandMessageHandlerTest.class,
+		ClientStatusUpdateMessageHandlerTest.class,
+		ClientToNodeMessageHandlerTest.class,
+		ClientWarningMessageHandlerTest.class,
+		NodeCommandMessageHandlerTest.class,
+		})
 public class MessageHandlerSuite {
 
 }

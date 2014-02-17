@@ -13,7 +13,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		ClientWarningMessageHandlerTest.class,
 		NodeCommandMessageHandlerTest.class,
 		NodeListMessageHandlerTest.class,
-		NodeStatusUpdateMessageHandlerTest.class})
+		NodeStatusUpdateMessageHandlerTest.class,
+		NodeToClientMessageHandlerTest.class})
 public class MessageHandlerSuite {
 
 }

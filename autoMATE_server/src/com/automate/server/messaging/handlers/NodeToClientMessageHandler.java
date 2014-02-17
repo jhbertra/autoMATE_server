@@ -34,8 +34,12 @@ implements IMessageHandler<M, NodeToClientMessageHandlerParams> {
 	@Override
 	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid, 
 			M message, NodeToClientMessageHandlerParams params) {
+		if(params == null) {
+			throw new NullPointerException("params were null in handleMessage.");
+		} else if (message == null) {
+			throw new NullPointerException("message was null in handleMessage.");
+		}
 		long nodeId = params.nodeId;
-
 		try {
 			Node node = dbManager.getNodeByUid(nodeId);
 			if(node == null) { // The node is not registered.

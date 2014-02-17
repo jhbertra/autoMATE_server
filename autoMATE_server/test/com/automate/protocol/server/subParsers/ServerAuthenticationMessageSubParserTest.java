@@ -99,7 +99,7 @@ public class ServerAuthenticationMessageSubParserTest {
 	}
 	
 	@Test(expected=SAXException.class)
-	public void testNoResponse() throws Exception {
+	public void testNoResponseCode() throws Exception {
 		subject = new ServerAuthenticationMessageSubParser();
 		subject.parseXml(xml3);
 	}

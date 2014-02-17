@@ -18,6 +18,8 @@ implements IMessageHandler<M, NodeToClientMessageHandlerParams> {
 	private IDatabaseManager dbManager;
 	private ISecurityManager securityManager;
 	
+	TestAccess testAccess;
+	
 	public NodeToClientMessageHandler(IDatabaseManager dbManager, ISecurityManager securityManager) {
 		this.dbManager = dbManager;
 		this.securityManager = securityManager;
@@ -59,4 +61,24 @@ implements IMessageHandler<M, NodeToClientMessageHandlerParams> {
 
 	protected abstract Message<ServerProtocolParameters> getUserNotFoundMessage(int majorVersion, int minorVersion, boolean sessionValid, M message);
 
+	class TestAccess {
+	
+		public Message<ServerProtocolParameters> getUserOfflineMessage(int majorVersion, int minorVersion, boolean sessionValid, M message) {
+			return NodeToClientMessageHandler.this.getUserOfflineMessage(majorVersion, minorVersion, sessionValid, message);
+		}
+
+		public Message<ServerProtocolParameters> getErrorMessage(int majorVersion, int minorVersion, boolean sessionValid, M message) {
+			return NodeToClientMessageHandler.this.getErrorMessage(majorVersion, minorVersion, sessionValid, message);
+		}
+
+		public Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid, M message, String sessionKey) {
+			return NodeToClientMessageHandler.this.getOkMessage(majorVersion, minorVersion, sessionValid, message, sessionKey);
+		}
+
+		public Message<ServerProtocolParameters> getUserNotFoundMessage(int majorVersion, int minorVersion, boolean sessionValid, M message) {
+			return NodeToClientMessageHandler.this.getUserNotFoundMessage(majorVersion, minorVersion, sessionValid, message);
+		}
+		
+	}
+	
 }

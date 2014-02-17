@@ -119,6 +119,12 @@ public class ClientCommandMessageSubParserTest {
 		subject.parseXml(xml3);
 	}
 	
+	@Test(expected=SAXException.class)
+	public void testNoCommandName() throws Exception {
+		subject = new ClientCommandMessageSubParser();
+		subject.parseXml(xml4);
+	}
+	
 	@Test
 	public void testProperlyFormattedMessageNoArgs() throws Exception {
 		subject = new ClientCommandMessageSubParser();

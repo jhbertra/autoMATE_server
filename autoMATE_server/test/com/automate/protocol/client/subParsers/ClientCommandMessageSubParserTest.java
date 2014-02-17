@@ -120,13 +120,6 @@ public class ClientCommandMessageSubParserTest {
 	}
 	
 	@Test
-	public void testProperlyFormattedMessageNoNameNoArgs() throws Exception {
-		subject = new ClientCommandMessageSubParser();
-		ClientCommandMessage expected = new ClientCommandMessage(parameters, 0, null, 0, null);
-		assertEquals(expected, subject.parseXml(xml4));
-	}
-	
-	@Test
 	public void testProperlyFormattedMessageNoArgs() throws Exception {
 		subject = new ClientCommandMessageSubParser();
 		ClientCommandMessage expected = new ClientCommandMessage(parameters, 0, "shutdown", 0, null);

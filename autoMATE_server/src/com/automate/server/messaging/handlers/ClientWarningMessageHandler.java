@@ -11,7 +11,9 @@ public class ClientWarningMessageHandler implements IMessageHandler<ClientWarnin
 	private final HashMap<Long, String> pendingWarnings;
 	
 	public ClientWarningMessageHandler(HashMap<Long, String> pendingWarnings) {
-		super();
+		if(pendingWarnings == null) {
+			throw new NullPointerException("Pending warnings map required.");
+		}
 		this.pendingWarnings = pendingWarnings;
 	}
 

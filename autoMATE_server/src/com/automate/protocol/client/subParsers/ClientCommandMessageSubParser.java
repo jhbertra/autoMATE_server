@@ -84,6 +84,9 @@ public class ClientCommandMessageSubParser extends ClientMessageSubParser<Client
 			if(commandIdString == null) {
 				throw new SAXException("command-id was null");
 			}
+			if(name == null) {
+				throw new SAXException("name was null.");
+			}
 			nodeId = Long.parseLong(nodeIdString);
 			commandId = Long.parseLong(commandIdString);
 		} else {

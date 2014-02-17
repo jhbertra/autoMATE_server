@@ -18,7 +18,7 @@ implements IMessageHandler<M, NodeToClientMessageHandlerParams> {
 	private IDatabaseManager dbManager;
 	private ISecurityManager securityManager;
 	
-	TestAccess testAccess;
+	TestAccess testAccess = new TestAccess();
 	
 	public NodeToClientMessageHandler(IDatabaseManager dbManager, ISecurityManager securityManager) {
 		this.dbManager = dbManager;

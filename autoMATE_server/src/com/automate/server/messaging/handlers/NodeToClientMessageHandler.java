@@ -21,6 +21,11 @@ implements IMessageHandler<M, NodeToClientMessageHandlerParams> {
 	TestAccess testAccess = new TestAccess();
 	
 	public NodeToClientMessageHandler(IDatabaseManager dbManager, ISecurityManager securityManager) {
+		if(dbManager == null) {
+			throw new NullPointerException(getClass().getName() + " requires non-null IDatabaseManager.");
+		} else if(securityManager == null) {
+			throw new NullPointerException(getClass().getName() + " requires non-null ISecurityManager.");
+		}
 		this.dbManager = dbManager;
 		this.securityManager = securityManager;
 

@@ -18,11 +18,6 @@ import com.automate.server.security.ISecurityManager;
  */
 public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<ClientCommandMessage> {
 
-	private long commandId;
-	private String commandName;
-	private long nodeId;
-	private List<CommandArgument<?>> args;
-
 	/**
 	 * Creates a new {@link ClientCommandMessageHandler}
 	 * @param dbManager the {@link IDatabaseManager} to query
@@ -32,26 +27,6 @@ public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<Clie
 			ISecurityManager securityManager) {
 		super(dbManager, securityManager);
 	}
-	
-	@Override
-	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid,
-			ClientCommandMessage message, ClientToNodeMessageHandlerParams params) {
-		commandId = message.commandId;
-		commandName = message.name;
-		nodeId = message.nodeId;
-		args = message.args;
-		
-		Message<ServerProtocolParameters> retValue =  super.handleMessage(majorVersion, minorVersion, sessionValid, message, params);
-		
-		commandId = -1;
-		commandName = null;
-		nodeId = -1;
-		args = null;
-		
-		return retValue;
-	}
-
-
 
 	/**
 	 * @return a {@link ServerClientCommandMessage} with responseCode == 400, message == "INVALID NODE ID"
@@ -60,7 +35,7 @@ public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<Clie
 	protected Message<ServerProtocolParameters> getNonExistentNodeMessage(int majorVersion, int minorVersion, boolean sessionValid, 
 			ClientCommandMessage message) {
 		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-				message.getParameters().sessionKey), commandId, 400, "INVALID NODE ID");
+				message.getParameters().sessionKey), message.commandId, 400, "INVALID NODE ID");
 	}
 
 	/**
@@ -70,7 +45,7 @@ public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<Clie
 	protected Message<ServerProtocolParameters> getNotOwnedNodeMessage(int majorVersion,	int minorVersion, boolean sessionValid, 
 			ClientCommandMessage message) {
 		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-				message.getParameters().sessionKey), commandId, 405, "NODE NOT OWNED BY USER");
+				message.getParameters().sessionKey), message.commandId, 405, "NODE NOT OWNED BY USER");
 	}
 
 	/**
@@ -80,7 +55,7 @@ public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<Clie
 	protected Message<ServerProtocolParameters> getNodeOfflineMessage(int majorVersion, int minorVersion, boolean sessionValid, 
 			ClientCommandMessage message) {
 		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-				message.getParameters().sessionKey), commandId, 404, "NODE OFFLINE");
+				message.getParameters().sessionKey), message.commandId, 404, "NODE OFFLINE");
 	}
 
 	/**
@@ -90,7 +65,7 @@ public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<Clie
 	protected Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid, 
 			ClientCommandMessage message, String nodeSessionKey) {
 		return new ServerNodeCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, nodeSessionKey), 
-				nodeId, commandName, commandId, args);
+				message.nodeId, message.name, message.commandId, message.args);
 	}
 
 	/**
@@ -100,6 +75,6 @@ public class ClientCommandMessageHandler extends ClientToNodeMessageHandler<Clie
 	protected Message<ServerProtocolParameters> getErrorMessage(int majorVersion, int minorVersion, boolean sessionValid, 
 			ClientCommandMessage message) {
 		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 
-				message.getParameters().sessionKey), commandId, 500, "INTERNAL SERVER ERROR");
+				message.getParameters().sessionKey), message.commandId, 500, "INTERNAL SERVER ERROR");
 	}
 }

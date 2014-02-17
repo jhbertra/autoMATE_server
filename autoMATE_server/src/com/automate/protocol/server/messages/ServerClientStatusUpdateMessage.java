@@ -47,7 +47,7 @@ public class ServerClientStatusUpdateMessage extends Message<ServerProtocolParam
 	public boolean equals(Object obj) {
 		if(super.equals(obj)) {
 			return	this.nodeId == ((ServerClientStatusUpdateMessage)obj).nodeId
-					&& (this.statuses == null ? 
+					&& ((this.statuses == null || this.statuses.isEmpty()) ? 
 						(((ServerClientStatusUpdateMessage)obj).statuses == null || ((ServerClientStatusUpdateMessage)obj).statuses.isEmpty()) 
 						: this.statuses.equals(((ServerClientStatusUpdateMessage)obj).statuses));
 		} else return false;

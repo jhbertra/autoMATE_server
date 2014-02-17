@@ -24,6 +24,9 @@ public class ClientCommandMessage extends Message<ClientProtocolParameters> {
 		if(commandId < 0) {
 			throw new IllegalArgumentException("commandId less than zero. " + nodeId);
 		}
+		if(name == null || name.isEmpty()) {
+			throw new IllegalArgumentException("name is null or empty! " + name);
+		}
 		this.nodeId = nodeId;
 		this.name = name;
 		this.commandId = commandId;

@@ -215,6 +215,46 @@ public class SessionManagerTest {
 	 * getSessionKeyForNodeId unit tests
 	 */
 
+	@Test(expected=IllegalArgumentException.class)
+	public void testGetSessionKeyForNodeId_NegativeNodeId() {
+		subject.getSessionKeyForNodeId(-1);
+	}
+
+	@Test
+	public void testGetSessionKeyForNodeId_InvalidUsername() {
+		assertNull(subject.getSessionKeyForNodeId(0));
+	}
+
+	@Test
+	public void testGetSessionKeyForNodeId_ValidUsername() {
+		String key = subject.createNewNodeSession(0, "address1");
+		assertEquals(key, subject.getSessionKeyForNodeId(0));
+	}
+	
+	/*
+	 * getSessionKeyForUsername unit tests
+	 */
+
+	@Test(expected=NullPointerException.class)
+	public void testGetSessionKeyForUsername_NullUsername() {
+		subject.getSessionKeyForUsername(null);
+	}
+
+	@Test
+	public void testGetSessionKeyForUsername_InvalidUsername() {
+		assertNull(subject.getSessionKeyForUsername("user1"));
+	}
+
+	@Test
+	public void testGetSessionKeyForUsername_ValidUsername() {
+		String key = subject.createNewAppSession("user1", "address1");
+		assertEquals(key, subject.getSessionKeyForUsername("user1"));
+	}
+	
+	/*
+	 * getUsernameForSessionKey unit tests
+	 */
+
 	@Test(expected=NullPointerException.class)
 	public void testGetUsernameForSessionKey_NullSessionKey() {
 		subject.getUsernameForSessionKey(null);
@@ -245,41 +285,29 @@ public class SessionManagerTest {
 	}
 	
 	/*
-	 * getSessionKeyForUsername unit tests
+	 * sessionValid unit tests
 	 */
 
-	@Test(expected=NullPointerException.class)
-	public void testGetSessionKeyForUsername_NullUsername() {
-		subject.getSessionKeyForUsername(null);
+	@Test(expected = NullPointerException.class)
+	public void testSessionValid_NullSession() {
+		subject.sessionValid(null);
 	}
 
 	@Test
-	public void testGetSessionKeyForUsername_InvalidUsername() {
-		assertNull(subject.getSessionKeyForUsername("user1"));
+	public void testSessionValid_InvalidSession() {
+		assertFalse(subject.sessionValid("session"));
 	}
 
 	@Test
-	public void testGetSessionKeyForUsername_ValidUsername() {
-		String key = subject.createNewAppSession("user1", "address1");
-		assertEquals(key, subject.getSessionKeyForUsername("user1"));
+	public void testSessionValid_ValidSession_OneNodeSession() {
+		String key1 = subject.createNewNodeSession(123456, "address1");
+		assertTrue(subject.sessionValid(key1));
 	}
-	
-//	/*
-//	 * getUsernameForSessionKey unit tests
-//	 */
-//
-//	@Test
-//	public void testGetUsernameForSessionKey_() {
-//		fail("Not yet implemented");
-//	}
-//	
-//	/*
-//	 * sessionValid unit tests
-//	 */
-//
-//	@Test
-//	public void testSessionValid_() {
-//		fail("Not yet implemented");
-//	}
+
+	@Test
+	public void testSessionValid_ValidSession_OneAppSession() {
+		String key1 = subject.createNewAppSession("user1", "address1");
+		assertTrue(subject.sessionValid(key1));
+	}
 		
 }

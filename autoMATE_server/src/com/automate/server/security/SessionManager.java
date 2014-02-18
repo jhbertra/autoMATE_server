@@ -56,9 +56,7 @@ public class SessionManager implements ISessionManager, EngineCallback {
 				return false;
 			}
 		}
-	}
-	
-	
+	}	
 
 	@Override
 	public void connectionLost(String sessionKey) {
@@ -136,8 +134,12 @@ public class SessionManager implements ISessionManager, EngineCallback {
 
 	@Override
 	public String getSessionKeyForNodeId(long nodeId) {
-		// TODO Auto-generated method stub
-		return null;
+		if(nodeId < 0) {
+			throw new IllegalArgumentException("nodeId < 0");
+		}
+		synchronized (lock) {			
+			return connectedClients.get("$" + String.valueOf(nodeId));
+		}
 	}
 
 	@Override
@@ -189,6 +191,9 @@ public class SessionManager implements ISessionManager, EngineCallback {
 
 	@Override
 	public boolean sessionValid(String sessionKey) {
+		if(sessionKey == null) {
+			 throw new NullPointerException("sessionKey was null.");
+		}
 		synchronized (lock) {			
 			return activeSessions.containsKey(sessionKey);
 		}

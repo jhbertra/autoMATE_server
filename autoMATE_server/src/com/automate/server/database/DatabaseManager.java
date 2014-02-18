@@ -1,7 +1,11 @@
 package com.automate.server.database;
 
+//import java.beans.Statement;
+import java.sql.Statement;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.List;
+import java.sql.SQLException;
 
 import com.automate.protocol.models.Node;
 import com.automate.server.database.models.Manufacturer;
@@ -34,9 +38,26 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
-	public User getUserByUsername(String username) {
+	public User getUserByUsername(String username){
 		// TODO Auto-generated method stub
-		return null;
+		Statement stmt = null;
+		String sqlQuery = "select * from users where username = \"" + username + "\""; 
+		try{
+			stmt = connection.createStatement();
+			ResultSet rtSet = stmt.executeQuery(sqlQuery);
+			long uid = rtSet.getLong("uid");
+			String userName = rtSet.getString("username");
+			String firstName = rtSet.getString("first_name");
+			String lastName = rtSet.getString("last_name");
+			String password = rtSet.getString("password");
+			String email = rtSet.getString("email");
+			User rtUser = new User(uid, userName, firstName, lastName, password, email);
+			return rtUser;
+		}
+		catch(SQLException e){
+			//TODO: Log error
+			return null;
+		}
 	}
 
 	@Override

@@ -30,10 +30,10 @@ public class User {
 	 */
 	public final String email;
 	
-	public User(long uid, String sername, String firstName, String lastName,
+	public User(long uid, String username, String firstName, String lastName,
 			String password, String email) {
 		this.uid = uid;
-		this.username = sername;
+		this.username = username;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;

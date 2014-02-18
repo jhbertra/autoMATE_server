@@ -28,9 +28,34 @@ public class ClientAuthenticationMessageTest {
 		subject = new ClientAuthenticationMessage(parameters, "username", null);
 	}
 	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalidUsername_TooShort() {
+		subject = new ClientAuthenticationMessage(parameters, "user", "pas5word");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalidUsername_IllegalCharacters() {
+		subject = new ClientAuthenticationMessage(parameters, "username,5", "pas5word");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalidPassword_TooShort() {
+		subject = new ClientAuthenticationMessage(parameters, "username", "pas5");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalidPassword_NoNumber() {
+		subject = new ClientAuthenticationMessage(parameters, "username", "password");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalidPassword_NoLetter() {
+		subject = new ClientAuthenticationMessage(parameters, "username", "142798.234");
+	}
+	
 	@Test
 	public void testToXml() {
-		subject = new ClientAuthenticationMessage(parameters, "username", "password");
+		subject = new ClientAuthenticationMessage(parameters, "username", "pas5word");
 		StringBuilder builder = new StringBuilder();
 		try {
 			subject.toXml(builder, 0);
@@ -45,7 +70,7 @@ public class ClientAuthenticationMessageTest {
 							"\t\t<parameter name=\"session-key\" value=\"\" />\n" +
 							"\t</parameters>\n" +
 							"\t<content >\n" +
-							"\t\t<authentication username=\"username\" password=\"password\" />\n" +
+							"\t\t<authentication username=\"username\" password=\"pas5word\" />\n" +
 							"\t</content>\n" +
 							"</message>\n";
 		String actual = builder.toString();

@@ -7,8 +7,16 @@ import com.automate.util.xml.XmlFormatException;
 
 public class ClientWarningMessage extends Message<ClientProtocolParameters> {
 
+	/**
+	 * The unique Id of the warning being acknowledged.
+	 */
 	public final long warningId;
 	
+	/**
+	 * Creates a new {@link ClientWarningMessage}
+	 * @param parameters the protocol parameters from the client
+	 * @param warningId the unique id of the warning
+	 */
 	public ClientWarningMessage(ClientProtocolParameters parameters, long warningId) {
 		super(parameters);
 		this.warningId = warningId;

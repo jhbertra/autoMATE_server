@@ -5,12 +5,28 @@ import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
+/**
+ * Represents a status update message from a client
+ * @author jamie.bertram
+ *
+ */
 public class ClientStatusUpdateMessage extends Message<ClientProtocolParameters> {
 
+	/**
+	 * The uid of the node whose status to request.
+	 */
 	public final long nodeId;
 	
+	/**
+	 * Creates a new {@link ClientStatusUpdateMessage}.
+	 * @param parameters the protocol parameters from the client 
+	 * @param nodeId the node's unique id.
+	 */
 	public ClientStatusUpdateMessage(ClientProtocolParameters parameters, long nodeId) {
 		super(parameters);
+		if(nodeId < 0) {
+			throw new IllegalArgumentException("nodeId was less than zero.");
+		}
 		this.nodeId = nodeId;
 	}
 

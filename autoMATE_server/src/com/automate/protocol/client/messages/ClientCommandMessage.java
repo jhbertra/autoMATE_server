@@ -8,14 +8,42 @@ import com.automate.protocol.models.CommandArgument;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
+/**
+ * Message type that represents a client-side command message.
+ * @author jamie.bertram
+ *
+ */
 public class ClientCommandMessage extends Message<ClientProtocolParameters> {
 
+	/**
+	 * The id of the node to whicht he command is being sent
+	 */
 	public final long nodeId;
+	/**
+	 * The name of the command.
+	 */
 	public final String name;
+	/**
+	 * The command message's unique id (for tracking and acknowledgement purposes). 
+	 */
 	public final long commandId;
 	
+	/**
+	 * The list of command arguments (may be null or empty).
+	 */
 	public final List<CommandArgument<?>> args;
 	
+	/**
+	 * Creates a new {@link ClientCommandMessage}
+	 * @param parameters the protocol parameters from the client
+	 * @param nodeId the id of the node the command is being sent to
+	 * @param name the name of the command
+	 * @param commandId the id of the command message (for tracking purposes - should be unique for every message)
+	 * @param args the list of command arguments (may be null or empty).
+	 * @throws IllegalArgumentException if nodeId < 0
+	 * @throws IllegalArgumentException if commandId < 0
+	 * @throws IllegalArgumentException if name is null or empty
+	 */
 	public ClientCommandMessage(ClientProtocolParameters parameters, long nodeId, String name, long commandId, List<CommandArgument<?>> args) {
 		super(parameters);
 		if(nodeId < 0) {

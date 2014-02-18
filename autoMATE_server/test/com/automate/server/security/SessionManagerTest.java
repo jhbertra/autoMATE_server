@@ -93,7 +93,7 @@ public class SessionManagerTest {
 	}
 	
 	@Test 
-	public void testCreateNewSession_NodeTriesThenUserTries() {
+	public void testCreateNewSession_NodeTriesThenAppTries() {
 		String expected1 = "310d7fe77650b4b2b33845f88eaa3ebc";
 		String expected2 = "1df81579e50db3612dbdf59a1a819b72";
 		assertEquals(expected1, subject.createNewNodeSession(123456, "address1"));
@@ -101,7 +101,7 @@ public class SessionManagerTest {
 	}
 	
 	@Test 
-	public void testCreateNewSession_UserTriesThenNodeTries() {
+	public void testCreateNewSession_AppTriesThenNodeTries() {
 		String expected1 = "1df81579e50db3612dbdf59a1a819b72";
 		String expected2 = "310d7fe77650b4b2b33845f88eaa3ebc";
 		assertEquals(expected1, subject.createNewAppSession("123456", "address2"));		
@@ -128,33 +128,142 @@ public class SessionManagerTest {
 		assertEquals("address1", subject.getIpAddressForSessionKey("2c2e755a6a7c0221acda26403155867f"));
 	}
 
-//	/*
-//	 * getNodeIdForSessionKey unit tests
-//	 */
-//
-//	@Test
-//	public void testGetNodeIdForSessionKey_() {
-//		fail("Not yet implemented");
-//	}
-//	
-//	/*
-//	 * getSessionKeyForNodeId unit tests
-//	 */
-//
-//	@Test
-//	public void testGetSessionKeyForNodeId_() {
-//		fail("Not yet implemented");
-//	}
-//	
-//	/*
-//	 * getSessionKeyForUsername unit tests
-//	 */
-//
-//	@Test
-//	public void testGetSessionKeyForUsername_() {
-//		fail("Not yet implemented");
-//	}
-//	
+	@Test
+	public void testGetIpAddressForSessionKey_SessionKeyValid_TwoExistingAppSessions() {
+		subject.createNewAppSession("user1", "address1");
+		subject.createNewAppSession("user2", "address2");
+		assertEquals("address1", subject.getIpAddressForSessionKey("2c2e755a6a7c0221acda26403155867f"));
+		assertEquals("address2", subject.getIpAddressForSessionKey("c93a9e58a71d3c3bf37200a4bcccc366"));
+	}
+
+	@Test
+	public void testGetIpAddressForSessionKey_SessionKeyValid_OneExistingNodeSession() {
+		subject.createNewNodeSession(123456, "address1");
+		assertEquals("address1", subject.getIpAddressForSessionKey("310d7fe77650b4b2b33845f88eaa3ebc"));
+	}
+
+	@Test
+	public void testGetIpAddressForSessionKey_SessionKeyValid_TwoExistingNodeSessions() {
+		subject.createNewNodeSession(123456, "address1");
+		subject.createNewNodeSession(1, "address2");
+		assertEquals("address1", subject.getIpAddressForSessionKey("310d7fe77650b4b2b33845f88eaa3ebc"));
+		assertEquals("address2", subject.getIpAddressForSessionKey("74ccc85b9a305713da923f7ecf2e1adb"));
+	}
+
+	@Test
+	public void testGetIpAddressForSessionKey_SessionKeyInvalid_OneExistingAppSession() {
+		subject.createNewAppSession("user1", "address1");
+		assertNull(subject.getIpAddressForSessionKey("sdf2e755a6a7c0221acda26403155867f"));
+	}
+
+	@Test
+	public void testGetIpAddressForSessionKey_SessionKeyInvalid_TwoExistingAppSessions() {
+		subject.createNewAppSession("user1", "address1");
+		subject.createNewAppSession("user2", "address2");
+		assertNull(subject.getIpAddressForSessionKey("2caf755a6a7c0221acda26403155867f"));
+		assertNull(subject.getIpAddressForSessionKey("c9dfs9e58a71d3c3bf37200a4bcccc366"));
+	}
+
+	@Test
+	public void testGetIpAddressForSessionKey_SessionKeyInvalid_OneExistingNodeSession() {
+		subject.createNewNodeSession(123456, "address1");
+		assertNull(subject.getIpAddressForSessionKey("310dfwfe77650b4b2b33845f88eaa3ebc"));
+	}
+
+	@Test
+	public void testGetIpAddressForSessionKey_SessionKeyInvalid_TwoExistingNodeSessions() {
+		subject.createNewNodeSession(123456, "address1");
+		subject.createNewNodeSession(1, "address2");
+		assertNull("address1", subject.getIpAddressForSessionKey("310d7fawdfdf7650b4b2b33845f88eaa3ebc"));
+		assertNull(subject.getIpAddressForSessionKey("74ccc85b9awf5713da923f7ecf2e1adb"));
+	}
+	
+	/*
+	 * getNodeIdForSessionKey unit tests
+	 */
+
+	@Test(expected=NullPointerException.class)
+	public void testGetNodeIdForSessionKey_NullSessionKey() {
+		subject.getNodeIdForSessionKey(null);
+	}
+
+	@Test
+	public void testGetNodeIdForSessionKey_InvalidSessionKey() {
+		assertEquals(-1, subject.getNodeIdForSessionKey("310d7fe77650b4b2b33845f88eaa3ebc"));
+	}
+
+	@Test
+	public void testGetNodeIdForSessionKey_ValidSessionKey_OneNodeSession() {
+		assertEquals(123456, subject.getNodeIdForSessionKey(subject.createNewNodeSession(123456, "address1")));
+	}
+
+	@Test
+	public void testGetNodeIdForSessionKey_ValidSessionKey_TwoNodeSessions() {
+		String key1 = subject.createNewNodeSession(123456, "address1");
+		String key2 = subject.createNewNodeSession(223456, "address2");
+		assertEquals(123456, subject.getNodeIdForSessionKey(key1));
+		assertEquals(223456, subject.getNodeIdForSessionKey(key2));
+	}
+
+	@Test
+	public void testGetNodeIdForSessionKey_ValidSessionKey_TryToGetFromAppSession() {
+		String key1 = subject.createNewAppSession("123456", "address1");
+		assertEquals(-1, subject.getNodeIdForSessionKey(key1));
+	}
+	
+	/*
+	 * getSessionKeyForNodeId unit tests
+	 */
+
+	@Test(expected=NullPointerException.class)
+	public void testGetUsernameForSessionKey_NullSessionKey() {
+		subject.getUsernameForSessionKey(null);
+	}
+
+	@Test
+	public void testGetUsernameForSessionKey_InvalidSessionKey() {
+		assertNull(subject.getUsernameForSessionKey("310d7fe77650b4b2b33845f88eaa3ebc"));
+	}
+
+	@Test
+	public void testGetUsernameForSessionKey_ValidSessionKey_OneNodeSession() {
+		assertEquals("user1", subject.getUsernameForSessionKey(subject.createNewAppSession("user1", "address1")));
+	}
+
+	@Test
+	public void testGetUsernameForSessionKey_ValidSessionKey_TwoNodeSessions() {
+		String key1 = subject.createNewAppSession("user1", "address1");
+		String key2 = subject.createNewAppSession("user2", "address2");
+		assertEquals("user1", subject.getUsernameForSessionKey(key1));
+		assertEquals("user2", subject.getUsernameForSessionKey(key2));
+	}
+
+	@Test
+	public void testGetUsernameForSessionKey_ValidSessionKey_TryToGetFromNodeSession() {
+		String key1 = subject.createNewNodeSession(123456, "address1");
+		assertNull(subject.getUsernameForSessionKey(key1));
+	}
+	
+	/*
+	 * getSessionKeyForUsername unit tests
+	 */
+
+	@Test(expected=NullPointerException.class)
+	public void testGetSessionKeyForUsername_NullUsername() {
+		subject.getSessionKeyForUsername(null);
+	}
+
+	@Test
+	public void testGetSessionKeyForUsername_InvalidUsername() {
+		assertNull(subject.getSessionKeyForUsername("user1"));
+	}
+
+	@Test
+	public void testGetSessionKeyForUsername_ValidUsername() {
+		String key = subject.createNewAppSession("user1", "address1");
+		assertEquals(key, subject.getSessionKeyForUsername("user1"));
+	}
+	
 //	/*
 //	 * getUsernameForSessionKey unit tests
 //	 */

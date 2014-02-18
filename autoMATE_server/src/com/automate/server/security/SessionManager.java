@@ -16,13 +16,30 @@ import com.automate.server.messaging.IMessageManager.MessageSentListener;
 
 public class SessionManager implements ISessionManager, EngineCallback {
 	
+	enum ClientType {
+		APP,
+		NODE
+	}
+	private class SessionData {
+		final String username;
+		final String ipAddress;
+		final ClientType clientType;
+		
+		public SessionData(String username, String ipAddress, ClientType clientType) {
+			this.username = username;
+			this.ipAddress = ipAddress;
+			this.clientType = clientType;
+		}
+	}
+	
 	private HashMap<String, SessionData> activeSessions = new HashMap<String, SessionManager.SessionData>();
+	
 	private HashMap<String, SessionData> pingedClients = new HashMap<String, SessionManager.SessionData>();
-	
-	private HashMap<String, Void> connectedClients = new HashMap<String, Void>();
-	
+	private HashMap<String, String> connectedClients = new HashMap<String, String>();
 	private final Object lock = new Object();
+	
 	private int majorVersion;
+
 	private int minorVersion;
 	
 	private static final String SALT = "jf849jow84u384hw83487w43w904fgsi874yfs";
@@ -31,18 +48,40 @@ public class SessionManager implements ISessionManager, EngineCallback {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
 	}
+
+	@Override
+	public boolean clientPingReceived(String client) {
+		synchronized (lock) {
+			if(pingedClients.containsKey(client)) {
+				pingedClients.remove(client);
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 	
+	
+
+	@Override
+	public void connectionLost(String sessionKey) {
+		synchronized (lock) {			
+			pingedClients.remove(sessionKey);
+			activeSessions.remove(sessionKey);
+		}
+	}
+
+	@Override
+	public String createNewAppSession(String username, String clientIpAddress) {
+		return createNewSession(username, clientIpAddress, ClientType.APP);
+	}
+
 	@Override
 	public String createNewNodeSession(long nodeId, String nodeIpAddress) {
 		if(nodeId < 0) {
 			throw new IllegalArgumentException("nodeId invalid " + nodeId);
 		}
 		return createNewSession("$" + String.valueOf(nodeId), nodeIpAddress, ClientType.NODE);
-	}
-
-	@Override
-	public String createNewAppSession(String username, String clientIpAddress) {
-		return createNewSession(username, clientIpAddress, ClientType.APP);
 	}
 
 	private String createNewSession(String clientId, String clientIpAddress, ClientType type) {
@@ -59,25 +98,9 @@ public class SessionManager implements ISessionManager, EngineCallback {
     	synchronized (lock) {
     		if(activeSessions.containsKey(key)) return null;
     		activeSessions.put(key, new SessionData(clientId, clientIpAddress, type));
-    		connectedClients.put(clientId, null);
+    		connectedClients.put(clientId, key);
     	}
 		return key;
-	}
-	
-	
-
-	@Override
-	public String getUsernameForSessionKey(String sessionKey) {
-		if(sessionKey != null) {
-			SessionData data;
-			synchronized (lock) {				
-				data = activeSessions.get(sessionKey);
-			}
-			if(data != null) {
-				return data.username;
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -95,12 +118,56 @@ public class SessionManager implements ISessionManager, EngineCallback {
 			return null;
 		}
 	}
+	
+	@Override
+	public long getNodeIdForSessionKey(String sessionKey) {
+		if(sessionKey == null) {
+			throw new NullPointerException("sessionKey was null.");
+		}
+		SessionData data;
+		synchronized (lock) {			
+			data = activeSessions.get(sessionKey);
+		}
+		if(data == null) {
+			return -1;
+		} else if (data.clientType == ClientType.NODE) {
+			return Long.parseLong(data.username.substring(1));
+		} else {
+			return -1;
+		}
+	}
 
 	@Override
-	public void connectionLost(String sessionKey) {
+	public String getSessionKeyForNodeId(long nodeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSessionKeyForUsername(String username) {
+		if(username == null) {
+			throw new NullPointerException("username was null");
+		}
 		synchronized (lock) {			
-			pingedClients.remove(sessionKey);
-			activeSessions.remove(sessionKey);
+			return connectedClients.get(username);
+		}
+	}
+
+	@Override
+	public String getUsernameForSessionKey(String sessionKey) {
+		if(sessionKey == null) {
+			throw new NullPointerException("sessionKey was null.");
+		}
+		SessionData data;
+		synchronized (lock) {				
+			data = activeSessions.get(sessionKey);
+		}
+		if(data == null) {
+			return null;
+		} else if(data.clientType == ClientType.APP) {
+			return data.username;
+		} else {
+			return null;
 		}
 	}
 
@@ -123,58 +190,11 @@ public class SessionManager implements ISessionManager, EngineCallback {
 		}
 	}
 
-	enum ClientType {
-		APP,
-		NODE
-	}
-	
-	private class SessionData {
-		final String username;
-		final String ipAddress;
-		final ClientType clientType;
-		
-		public SessionData(String username, String ipAddress, ClientType clientType) {
-			this.username = username;
-			this.ipAddress = ipAddress;
-			this.clientType = clientType;
-		}
-	}
-
 	@Override
 	public boolean sessionValid(String sessionKey) {
 		synchronized (lock) {			
 			return activeSessions.containsKey(sessionKey);
 		}
-	}
-
-	@Override
-	public boolean clientPingReceived(String client) {
-		synchronized (lock) {
-			if(pingedClients.containsKey(client)) {
-				pingedClients.remove(client);
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-
-	@Override
-	public long getNodeIdForSessionKey(String sessionKey) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String getSessionKeyForUsername(String username) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getSessionKeyForNodeId(long nodeId) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 }

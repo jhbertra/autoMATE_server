@@ -48,7 +48,7 @@ public class AuthenticationMessageHandlerTest {
 	@Test(expected = NullPointerException.class)
 	public void testHandleMessage_NullParams() {
 		ClientProtocolParameters parameters = new ClientProtocolParameters(1, 0, "");
-		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "user", "password");
+		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "username", "pas5word");
 		context.checking(new Expectations() {{
 		}});
 		subject = new AuthenticationMessageHandler(securityManager);
@@ -62,9 +62,9 @@ public class AuthenticationMessageHandlerTest {
 	@Test
 	public void testHandleMessage_ValidCredentials() {
 		ClientProtocolParameters parameters = new ClientProtocolParameters(1, 0, "");
-		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "user", "password");
+		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "username", "pas5word");
 		context.checking(new Expectations() {{
-			oneOf(securityManager).authenticateClient("user", "password", "", "ipAddress"); will(returnValue("sessionKey"));
+			oneOf(securityManager).authenticateClient("username", "pas5word", "", "ipAddress"); will(returnValue("sessionKey"));
 		}});
 		subject = new AuthenticationMessageHandler(securityManager);
 		AuthenticationMessageHandlerParams params = new AuthenticationMessageHandlerParams("ipAddress");
@@ -72,7 +72,7 @@ public class AuthenticationMessageHandlerTest {
 		context.assertIsSatisfied();
 		
 		ServerAuthenticationMessage expected = new ServerAuthenticationMessage(
-				new ServerProtocolParameters(1, 0, true, "sessionKey"), "user", 200, "OK", "sessionKey");
+				new ServerProtocolParameters(1, 0, true, "sessionKey"), "username", 200, "OK", "sessionKey");
 		
 		assertEquals(expected, response);
 	}
@@ -80,9 +80,9 @@ public class AuthenticationMessageHandlerTest {
 	@Test
 	public void testHandleMessage_InvalidCredentials() {
 		ClientProtocolParameters parameters = new ClientProtocolParameters(1, 0, "");
-		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "user", "password");
+		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "username", "pas5word");
 		context.checking(new Expectations() {{
-			oneOf(securityManager).authenticateClient("user", "password", "", "ipAddress"); will(returnValue(""));
+			oneOf(securityManager).authenticateClient("username", "pas5word", "", "ipAddress"); will(returnValue(""));
 		}});
 		subject = new AuthenticationMessageHandler(securityManager);
 		AuthenticationMessageHandlerParams params = new AuthenticationMessageHandlerParams("ipAddress");
@@ -91,16 +91,16 @@ public class AuthenticationMessageHandlerTest {
 		
 		context.assertIsSatisfied();
 		ServerAuthenticationMessage expected = new ServerAuthenticationMessage(
-				new ServerProtocolParameters(1, 0, true, ""), "user", 400, "DENIED", "");
+				new ServerProtocolParameters(1, 0, true, ""), "username", 400, "DENIED", "");
 		assertEquals(expected, response);
 	}
 	
 	@Test
 	public void testHandleMessage_InternalError() {
 		ClientProtocolParameters parameters = new ClientProtocolParameters(1, 0, "");
-		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "user", "password");
+		ClientAuthenticationMessage message = new ClientAuthenticationMessage(parameters, "username", "pas5word");
 		context.checking(new Expectations() {{
-			oneOf(securityManager).authenticateClient("user", "password", "", "ipAddress"); will(throwException(new RuntimeException()));
+			oneOf(securityManager).authenticateClient("username", "pas5word", "", "ipAddress"); will(throwException(new RuntimeException()));
 		}});
 		subject = new AuthenticationMessageHandler(securityManager);
 		AuthenticationMessageHandlerParams params = new AuthenticationMessageHandlerParams("ipAddress");
@@ -109,7 +109,7 @@ public class AuthenticationMessageHandlerTest {
 		
 		context.assertIsSatisfied();
 		ServerAuthenticationMessage expected = new ServerAuthenticationMessage(
-				new ServerProtocolParameters(1, 0, true, ""), "user", 500, "INTERNAL SERVER ERROR", "");
+				new ServerProtocolParameters(1, 0, true, ""), "username", 500, "INTERNAL SERVER ERROR", "");
 		assertEquals(expected, response);
 	}
 

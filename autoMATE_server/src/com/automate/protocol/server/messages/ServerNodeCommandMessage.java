@@ -8,14 +8,44 @@ import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
+/**
+ * Represents a command message sent from the server to a node.
+ * @author jamie.bertram
+ *
+ */
 public class ServerNodeCommandMessage extends Message<ServerProtocolParameters> {
 
+	/**
+	 * The id of the node to which the command is being sent.
+	 */
 	public final long nodeId;
+	
+	/**
+	 * The name of the command.
+	 */
 	public final String name;
+	
+	/**
+	 * The uid of the command message sent by the client.
+	 */
 	public final long commandId;
 	
+	/**
+	 * The command arguments.  may be null or empty.
+	 */
 	public final List<CommandArgument<?>> args;
 	
+	/**
+	 * Creates a new {@link ServerNodeCommandMessage}
+	 * @param parameters the protocol parameters sent by the server
+	 * @param nodeId the uid of the destination node.
+	 * @param name the name fo the command.
+	 * @param commandId the uid of the command message sent by the client
+	 * @param args the command arguments
+	 * @throws NullPointerException if name is null or empty
+	 * @throws IllegalArgumentException if nodeId < 0
+	 * @throws IllegalArgumentException if commandId < 0
+	 */
 	public ServerNodeCommandMessage(ServerProtocolParameters parameters, long nodeId, String name, long commandId, List<CommandArgument<?>> args) {
 		super(parameters);
 		if(nodeId < 0) {
@@ -23,6 +53,9 @@ public class ServerNodeCommandMessage extends Message<ServerProtocolParameters> 
 		}
 		if(commandId < 0) {
 			throw new IllegalArgumentException("commandId less than zero. " + nodeId);
+		}
+		if(name == null || name.isEmpty()) {
+			throw new NullPointerException("name was null or empty.");
 		}
 		this.nodeId = nodeId;
 		this.name = name;

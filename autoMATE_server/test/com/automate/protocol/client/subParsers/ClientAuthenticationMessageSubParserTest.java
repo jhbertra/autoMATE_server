@@ -52,7 +52,7 @@ public class ClientAuthenticationMessageSubParserTest {
 			"\t\t<parameter name=\"session-key\" value=\"session\" />\n" +
 			"\t</parameters>\n" +
 			"\t<content >\n" +
-			"\t\t<authentication username=\"username\" password=\"password\" />\n" +
+			"\t\t<authentication username=\"user.name\" password=\"pas5word\" />\n" +
 			"\t</content>\n" +
 			"</message>\n";
 	
@@ -79,7 +79,7 @@ public class ClientAuthenticationMessageSubParserTest {
 	@Test
 	public void testProperlyFormattedMessage() throws Exception {
 		subject = new ClientAuthenticationMessageSubParser();
-		ClientAuthenticationMessage expected = new ClientAuthenticationMessage(parameters, "username", "password");
+		ClientAuthenticationMessage expected = new ClientAuthenticationMessage(parameters, "user.name", "pas5word");
 		assertEquals(expected, subject.parseXml(xml4));
 	}
 

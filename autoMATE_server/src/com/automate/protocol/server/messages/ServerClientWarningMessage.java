@@ -5,16 +5,46 @@ import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
+/**
+ * Represents a warning message sent from the server to the clinet
+ * @author jamie.bertram
+ *
+ */
 public class ServerClientWarningMessage extends Message<ServerProtocolParameters> {
 
+	/**
+	 * The uid of the warning.
+	 */
 	public final long warningId;
+	/**
+	 * The uid of the node that created the warning.
+	 */
 	public final long nodeId;
+	/**
+	 * The warning message.
+	 */
 	public final String message;
 	
+	/**
+	 * Creates a new {@link ServerClientWarningMessage}
+	 * @param parameters the protocol parameters from the server
+	 * @param warningId the warning's uid
+	 * @param nodeId the uid of the node
+	 * @param message the warning message.
+	 * @throws NullPointerException if message is null
+	 * @throws IllegalArgumentException if warningId < 0
+	 * @throws IllegalArgumentException if nodeId < 0
+	 */
 	public ServerClientWarningMessage(ServerProtocolParameters parameters, long warningId, long nodeId, String message) {
 		super(parameters);
 		if(message == null) {
 			throw new NullPointerException("message was null in ServerWarningMessage");
+		}
+		if(nodeId < 0) {
+			throw new IllegalArgumentException("nodeId invalid: " + nodeId);
+		}
+		if(warningId < 0) {
+			throw new IllegalArgumentException("warningId invalid: " + warningId);
 		}
 		this.warningId = warningId;
 		this.nodeId = nodeId;

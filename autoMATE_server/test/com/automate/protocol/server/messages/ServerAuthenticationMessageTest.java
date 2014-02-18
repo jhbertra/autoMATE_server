@@ -28,9 +28,24 @@ public class ServerAuthenticationMessageTest {
 		subject = new ServerAuthenticationMessage(parameters, "username", 200, null, "key");
 	}
 	
-	@Test// should be fine
-	public void testNullSessionKey() {
+	@Test(expected=IllegalArgumentException.class)
+	public void testNullSessionKey_Response200() {
 		subject = new ServerAuthenticationMessage(parameters, "username", 200, "OK", null);
+	}
+	
+	@Test// should be fine
+	public void testNullSessionKey_Response400() {
+		subject = new ServerAuthenticationMessage(parameters, "username", 400, "OK", null);
+	}
+	
+	@Test// should be fine
+	public void testNullSessionKey_Response500() {
+		subject = new ServerAuthenticationMessage(parameters, "username", 500, "OK", null);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testInvalidResponse() {
+		subject = new ServerAuthenticationMessage(parameters, "username", 600, "OK", null);
 	}
 	
 	@Test
@@ -85,7 +100,7 @@ public class ServerAuthenticationMessageTest {
 
 	@Test
 	public void testToXmlNullSessionKey() {
-		subject = new ServerAuthenticationMessage(parameters, "username", 200, "OK", null);
+		subject = new ServerAuthenticationMessage(parameters, "username", 400, "DENIED", null);
 		StringBuilder builder = new StringBuilder();
 		try {
 			subject.toXml(builder, 0);
@@ -101,7 +116,7 @@ public class ServerAuthenticationMessageTest {
 							"\t\t<parameter name=\"session-key\" value=\"session\" />\n" +
 							"\t</parameters>\n" +
 							"\t<content >\n" +
-							"\t\t<authentication username=\"username\" response=\"200 OK\" />\n" +
+							"\t\t<authentication username=\"username\" response=\"400 DENIED\" />\n" +
 							"\t</content>\n" +
 							"</message>\n";
 		String actual = builder.toString();

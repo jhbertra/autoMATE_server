@@ -8,14 +8,35 @@ import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
+/**
+ * Represents a status update message sent from the server to the client.
+ * @author jamie.bertram
+ *
+ */
 public class ServerClientStatusUpdateMessage extends Message<ServerProtocolParameters> {
 	
+	/**
+	 * The id of the node whose status was requested.
+	 */
 	public final long nodeId;
 	
+	/**
+	 * The list of statuses (may be null or empty)
+	 */
 	public final List<Status<?>> statuses;
 	
+	/**
+	 * Creates a new {@link ServerClientStatusUpdateMessage}
+	 * @param parameters the protocol parameters from the server
+	 * @param nodeId the id of the node
+	 * @param statuses the statuses from the node
+	 * @throws IllegalArgumentException if nodeId < 0
+	 */
 	public ServerClientStatusUpdateMessage(ServerProtocolParameters parameters, long nodeId, List<Status<?>> statuses) {
 		super(parameters);
+		if(nodeId < 0) {
+			throw new IllegalArgumentException("nodeId invalid: " + nodeId);
+		}
 		this.nodeId = nodeId;
 		this.statuses = statuses;
 	}

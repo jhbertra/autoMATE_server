@@ -8,10 +8,23 @@ import com.automate.protocol.models.Status;
 import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.util.xml.XmlFormatException;
 
+/**
+ * Represents a node list message sent from the server to a client
+ * @author jamie.bertram
+ *
+ */
 public class ServerNodeListMessage extends Message <ServerProtocolParameters> {
 
+	/**
+	 * The nodes belonging to the cliinet (may be null or empty).
+	 */
 	public final List<Node> nodes;
 
+	/**
+	 * Creates a new {@link ServerNodeListMessage}
+	 * @param parameters the protocol parameters sent by the server
+	 * @param nodes the nodes that belong to the user.
+	 */
 	public ServerNodeListMessage(ServerProtocolParameters parameters, List<Node> nodes) {
 		super(parameters);
 		this.nodes = nodes;

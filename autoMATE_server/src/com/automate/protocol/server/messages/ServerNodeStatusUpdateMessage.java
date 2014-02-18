@@ -6,12 +6,29 @@ import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.util.xml.Attribute;
 import com.automate.util.xml.XmlFormatException;
 
+/**
+ * Represents a status update message sent from the server to a node
+ * @author jamie.bertram
+ *
+ */
 public class ServerNodeStatusUpdateMessage extends Message<ServerProtocolParameters> {
 
+	/**
+	 * The uid of the node
+	 */
 	public final long nodeId;
 	
+	/**
+	 * Creates a new {@link ServerNodeStatusUpdateMessage}
+	 * @param parameters the protocol parameters sent by the server
+	 * @param nodeId the id of the node
+	 * @throws IllegalArgumentException if nodeId < 0
+	 */
 	public ServerNodeStatusUpdateMessage(ServerProtocolParameters parameters, long nodeId) {
 		super(parameters);
+		if(nodeId < 0) {
+			throw new IllegalArgumentException("nodeId less than zero. " + nodeId);
+		}
 		this.nodeId = nodeId;
 	}
 

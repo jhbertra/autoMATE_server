@@ -9,6 +9,7 @@ import com.automate.protocol.client.subParsers.ClientMessageSubParserSuite;
 import com.automate.protocol.server.messages.ServerMessageSuite;
 import com.automate.protocol.server.subParsers.ServerMessageSubParserSuite;
 import com.automate.server.messaging.handlers.MessageHandlerSuite;
+import com.automate.server.security.SecuritySuite;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -16,7 +17,9 @@ import com.automate.server.messaging.handlers.MessageHandlerSuite;
 	ClientMessageSubParserSuite.class,
 	ServerMessageSuite.class,
 	ServerMessageSubParserSuite.class,
-	MessageHandlerSuite.class})
+	MessageHandlerSuite.class,
+	SecuritySuite.class
+})
 public class TestSuite {
 
 }

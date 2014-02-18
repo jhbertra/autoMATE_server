@@ -142,5 +142,23 @@ public class SessionManager implements ISessionManager, EngineCallback {
 			}
 		}
 	}
+
+	@Override
+	public long getNodeIdForSessionKey(String sessionKey) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getSessionKeyForUsername(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSessionKeyForNodeId(long nodeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

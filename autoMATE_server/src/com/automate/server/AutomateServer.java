@@ -47,7 +47,7 @@ public class AutomateServer {
 		}
 		dbManager = new DatabaseManager(connection);
 		SessionManager sessionManager = new SessionManager(MAJOR_VERSION, MINOR_VERSION);
-		securityManager = new SecurityManagerImpl(sessionManager, dbManager);
+		securityManager = new SecurityManagerImpl(sessionManager, dbManager, MAJOR_VERSION, MINOR_VERSION);
 		connectivityManager = new ConnectivityEngine(30, 15, sessionManager);
 		messageManager = new MessageManager(dbManager, securityManager, connectivityManager, MAJOR_VERSION, MINOR_VERSION);
 		

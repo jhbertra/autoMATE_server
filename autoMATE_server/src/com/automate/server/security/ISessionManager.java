@@ -6,5 +6,8 @@ public interface ISessionManager {
 	String getUsernameForSessionKey(String sessionKey);
 	String getIpAddressForSessionKey(String sessionKey);
 	boolean sessionValid(String sessionKey);
+	long getNodeIdForSessionKey(String sessionKey);
+	String getSessionKeyForUsername(String username);
+	String getSessionKeyForNodeId(long nodeId);
 
 }

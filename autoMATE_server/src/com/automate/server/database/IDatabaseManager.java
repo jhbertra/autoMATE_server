@@ -21,7 +21,7 @@ public interface IDatabaseManager extends IManager {
 	 * User queries.
 	 */
 	User getUserByUsername(String username);
-	User getUserByUid(int userId);
+	User getUserByUid(long userId);
 
 	/*
 	 * Node queries.
@@ -32,7 +32,7 @@ public interface IDatabaseManager extends IManager {
 	/*.
 	 * Model queries
 	 */
-	Model getModelByUid(int modelId);
+	Model getModelByUid(long modelId);
 	
 	/*
 	 * Manufacturer queries.

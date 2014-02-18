@@ -17,17 +17,17 @@ public class Node {
 	/**
 	 * The foreign key of this node's user
 	 */
-	public final int userId;
+	public final long userId;
 	/**
 	 * The foreign key of this node's model
 	 */
-	public final int modelId;
+	public final long modelId;
 	/**
 	 * The maximum protocol version this node supports.
 	 */
 	public final String maxVersion;
 	
-	public Node(long uid, String name,int userId,int modelId, String maxVersion){
+	public Node(long uid, String name,long userId,long modelId, String maxVersion){
 		this.uid = uid;
 		this.name = name;
 		this.userId = userId;

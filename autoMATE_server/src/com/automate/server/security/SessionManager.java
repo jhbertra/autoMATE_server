@@ -6,6 +6,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.protocol.server.messages.ServerPingMessage;
 import com.automate.server.connectivity.EngineCallback;
@@ -14,8 +16,10 @@ import com.automate.server.messaging.IMessageManager.MessageSentListener;
 
 public class SessionManager implements ISessionManager, EngineCallback {
 	
-	private HashMap<String, SessionData> activeSessions;
-	private HashMap<String, SessionData> pingedClients;
+	private HashMap<String, SessionData> activeSessions = new HashMap<String, SessionManager.SessionData>();
+	private HashMap<String, SessionData> pingedClients = new HashMap<String, SessionManager.SessionData>();
+	
+	private HashMap<String, Void> connectedClients = new HashMap<String, Void>();
 	
 	private final Object lock = new Object();
 	private int majorVersion;
@@ -27,37 +31,40 @@ public class SessionManager implements ISessionManager, EngineCallback {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
 	}
+	
+	@Override
+	public String createNewNodeSession(long nodeId, String nodeIpAddress) {
+		if(nodeId < 0) {
+			throw new IllegalArgumentException("nodeId invalid " + nodeId);
+		}
+		return createNewSession("$" + String.valueOf(nodeId), nodeIpAddress, ClientType.NODE);
+	}
 
 	@Override
-	public String createNewSession(String username, String clientIpAddress) {
-		MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("MD5");
-			md.update((username + ":" + clientIpAddress + ":" + SALT).getBytes("UTF-8"));
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+	public String createNewAppSession(String username, String clientIpAddress) {
+		return createNewSession(username, clientIpAddress, ClientType.APP);
+	}
+
+	private String createNewSession(String clientId, String clientIpAddress, ClientType type) {
+		if(clientId == null) {
+			throw new NullPointerException("username was null.");
 		}
-		
-		byte [] hashData = md.digest();
-		
-		//convert the byte to hex format
-        StringBuilder hexString = new StringBuilder();
-    	for (int i = 0; i < hashData.length; ++i) {
-    		String hex=Integer.toHexString(0xff & hashData[i]);
-   	     	if(hex.length()==1) hexString.append('0');
-   	     	hexString.append(hex);
-    	}
-    	
-    	String key = hexString.toString();
-		
+		if(clientIpAddress == null) {
+			throw new NullPointerException("clientIpAddress was null.");
+		}
+		synchronized (lock) {			
+			if(connectedClients.containsKey(clientId)) return null;
+		}
+    	String key = DigestUtils.md5Hex(clientId + ":" + clientIpAddress + ":" + SALT + ":" + type);		
     	synchronized (lock) {
     		if(activeSessions.containsKey(key)) return null;
-    		activeSessions.put(key, new SessionData(username, clientIpAddress));
+    		activeSessions.put(key, new SessionData(clientId, clientIpAddress, type));
+    		connectedClients.put(clientId, null);
     	}
 		return key;
 	}
+	
+	
 
 	@Override
 	public String getUsernameForSessionKey(String sessionKey) {
@@ -75,16 +82,18 @@ public class SessionManager implements ISessionManager, EngineCallback {
 
 	@Override
 	public String getIpAddressForSessionKey(String sessionKey) {
-		if(sessionKey != null) {
-			SessionData data;
-			synchronized (lock) {				
-				data = activeSessions.get(sessionKey);
-			}
-			if(data != null) {
-				return data.ipAddress;
-			}
+		if(sessionKey == null) {
+			throw new NullPointerException("sessionKey was null.");
 		}
-		return null;
+		SessionData data;
+		synchronized (lock) {				
+			data = activeSessions.get(sessionKey);
+		}
+		if(data != null) {
+			return data.ipAddress;
+		} else {				
+			return null;
+		}
 	}
 
 	@Override
@@ -114,13 +123,20 @@ public class SessionManager implements ISessionManager, EngineCallback {
 		}
 	}
 
+	enum ClientType {
+		APP,
+		NODE
+	}
+	
 	private class SessionData {
 		final String username;
 		final String ipAddress;
+		final ClientType clientType;
 		
-		public SessionData(String username, String ipAddress) {
+		public SessionData(String username, String ipAddress, ClientType clientType) {
 			this.username = username;
 			this.ipAddress = ipAddress;
+			this.clientType = clientType;
 		}
 	}
 

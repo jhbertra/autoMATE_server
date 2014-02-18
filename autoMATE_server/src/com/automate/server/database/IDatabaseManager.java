@@ -31,7 +31,7 @@ public interface IDatabaseManager extends IManager {
 	/*.
 	 * Model queries
 	 */
-	Model getModelByUid(int modelId);
+	Model getModelByUid(long modelId);
 	
 	/*
 	 * Manufacturer queries.

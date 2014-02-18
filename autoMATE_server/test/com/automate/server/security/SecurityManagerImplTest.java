@@ -96,7 +96,7 @@ public class SecurityManagerImplTest {
 		context.checking(new Expectations() {
 			{
 				oneOf(dbManager).getUserByUsername("user"); will(returnValue(new User(0, "user", "", "", "password", "")));
-				oneOf(sessionManager).createNewSession("user", "ipAddress"); will(returnValue(expected));
+				oneOf(sessionManager).createNewAppSession("user", "ipAddress"); will(returnValue(expected));
 			}
 		});
 		assertEquals(expected, subject.authenticateClient("user", "password", null, "ipAddress"));
@@ -109,7 +109,7 @@ public class SecurityManagerImplTest {
 		context.checking(new Expectations() {
 			{
 				oneOf(dbManager).getUserByUsername("user"); will(returnValue(new User(0, "user", "", "", "password", "")));
-				oneOf(sessionManager).createNewSession("user", "ipAddress"); will(returnValue(expected));
+				oneOf(sessionManager).createNewAppSession("user", "ipAddress"); will(returnValue(expected));
 			}
 		});
 		assertEquals(expected, subject.authenticateClient("user", "password", "", "ipAddress"));

@@ -52,7 +52,7 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
-	public Model getModelByUid(int modelId) {
+	public Model getModelByUid(long modelId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

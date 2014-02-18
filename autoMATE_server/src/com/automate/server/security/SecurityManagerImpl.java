@@ -69,7 +69,7 @@ public class SecurityManagerImpl implements ISecurityManager {
 				return null;
 			}
 			if((sessionKey == null || sessionKey.isEmpty()) && user.password.equals(password)) {			
-				return sessionManager.createNewSession(username, ipAddress);
+				return sessionManager.createNewAppSession(username, ipAddress);
 			}
 		} catch(Exception e) {
 			// allow method to return null TODO log error.

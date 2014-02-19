@@ -4,6 +4,7 @@ package com.automate.server.database;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
 
@@ -29,8 +30,32 @@ public class DatabaseManager implements IDatabaseManager {
 
 	@Override
 	public List<com.automate.server.database.models.Node> getClientNodeList(
-			String username) {
+			long userId) {
+		if(userId < 0){
+			throw new IllegalArgumentException("Invalid user id.");
+		}
+		Statement stmt = null;
+		String sqlQuery = "select * from node where user_id = " + userId;
+		try{
+			stmt = connection.createStatement();
+			ResultSet rtSet = stmt.executeQuery(sqlQuery);
+			List<Node> rtNodeList = new ArrayList<Node>();
+			while(rtSet.next()){
+				long nId = rtSet.getLong("uid");
+				String name = rtSet.getString("name");
+				long usrID = rtSet.getLong("user_id");
+				long modelId = rtSet.getLong("model_id");
+				String maxVersion = rtSet.getString("max_version");
+				Node rtNode = new Node(nId,name,usrID,modelId,maxVersion);
+				rtNodeList.add(rtNode);
+			}
+			return rtNodeList;
+		}
+		catch(SQLException e){
+			//TODO: Log error
+		}
 		return null;
+		
 	}
 
 	@Override

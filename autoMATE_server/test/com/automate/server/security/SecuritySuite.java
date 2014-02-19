@@ -7,7 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(value = {
 		SecurityManagerImplTest.class,
-		SessionManagerTest.class
+		SessionManagerTest.class,
+		SecurityIntegrationTest.class
 })
 public class SecuritySuite {
 

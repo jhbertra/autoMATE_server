@@ -96,7 +96,7 @@ public class ClientCommandMessage extends Message<ClientProtocolParameters> {
 
 	@Override
 	public com.automate.protocol.Message.MessageType getMessageType() {
-		return MessageType.COMMAND;
+		return MessageType.COMMAND_CLIENT;
 	}
 
 	/* (non-Javadoc)

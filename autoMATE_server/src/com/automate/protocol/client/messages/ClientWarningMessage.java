@@ -29,7 +29,7 @@ public class ClientWarningMessage extends Message<ClientProtocolParameters> {
 
 	@Override
 	public com.automate.protocol.Message.MessageType getMessageType() {
-		return MessageType.WARNING;
+		return MessageType.WARNING_CLIENT;
 	}
 
 	/* (non-Javadoc)

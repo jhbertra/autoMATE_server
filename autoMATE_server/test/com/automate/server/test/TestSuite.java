@@ -8,6 +8,7 @@ import com.automate.protocol.client.messages.ClientMessageSuite;
 import com.automate.protocol.client.subParsers.ClientMessageSubParserSuite;
 import com.automate.protocol.server.messages.ServerMessageSuite;
 import com.automate.protocol.server.subParsers.ServerMessageSubParserSuite;
+import com.automate.server.messaging.MessagingSuite;
 import com.automate.server.messaging.handlers.MessageHandlerSuite;
 import com.automate.server.security.SecuritySuite;
 
@@ -18,7 +19,8 @@ import com.automate.server.security.SecuritySuite;
 	ServerMessageSuite.class,
 	ServerMessageSubParserSuite.class,
 	MessageHandlerSuite.class,
-	SecuritySuite.class
+	SecuritySuite.class,
+	MessagingSuite.class
 })
 public class TestSuite {
 

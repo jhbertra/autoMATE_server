@@ -58,7 +58,7 @@ public class ServerClientStatusUpdateMessage extends Message<ServerProtocolParam
 
 	@Override
 	public com.automate.protocol.Message.MessageType getMessageType() {
-		return MessageType.STATUS_UPDATE;
+		return MessageType.STATUS_UPDATE_NODE;
 	}
 
 	/* (non-Javadoc)

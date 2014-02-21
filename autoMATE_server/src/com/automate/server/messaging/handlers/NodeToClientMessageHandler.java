@@ -13,7 +13,7 @@ import com.automate.server.security.ISecurityManager;
  *
  */
 public abstract class NodeToClientMessageHandler<M extends Message<ClientProtocolParameters>> 
-implements IMessageHandler<M, NodeToClientMessageHandlerParams> {
+implements IMessageHandler<M, Void> {
 
 	private IDatabaseManager dbManager;
 	private ISecurityManager securityManager;
@@ -33,13 +33,11 @@ implements IMessageHandler<M, NodeToClientMessageHandlerParams> {
 
 	@Override
 	public Message<ServerProtocolParameters> handleMessage(int majorVersion, int minorVersion, boolean sessionValid, 
-			M message, NodeToClientMessageHandlerParams params) {
-		if(params == null) {
-			throw new NullPointerException("params were null in handleMessage.");
-		} else if (message == null) {
+			M message, Void params) {
+		if (message == null) {
 			throw new NullPointerException("message was null in handleMessage.");
 		}
-		long nodeId = params.nodeId;
+		long nodeId = securityManager.getNodeId(message.getParameters().sessionKey);
 		try {
 			Node node = dbManager.getNodeByUid(nodeId);
 			if(node == null) { // The node is not registered.

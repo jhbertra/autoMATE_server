@@ -32,7 +32,7 @@ public class ServerCommandMessageTest {
 		} catch (XmlFormatException e) {
 			fail(e.getMessage());
 		}
-		String expected = 	"content-type:command\n" +
+		String expected = 	"content-type:command-node\n" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 							"<message >\n" +
 							"\t<parameters >\n" +
@@ -57,7 +57,7 @@ public class ServerCommandMessageTest {
 		} catch (XmlFormatException e) {
 			fail(e.getMessage());
 		}
-		String expected = 	"content-type:command\n" +
+		String expected = 	"content-type:command-node\n" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 							"<message >\n" +
 							"\t<parameters >\n" +

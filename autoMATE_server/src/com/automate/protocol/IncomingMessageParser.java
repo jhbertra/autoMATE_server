@@ -1,6 +1,7 @@
 package com.automate.protocol;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,8 +10,20 @@ import org.xml.sax.SAXException;
 
 import com.automate.util.xml.XmlFormatException;
 
-public abstract class IncomingMessageParser<P extends ProtocolParameters> {
+public class IncomingMessageParser<P extends ProtocolParameters> implements IIncomingMessageParser<P> {
 
+	private HashMap<String, MessageSubParser<Message<P>, P>> subParsers;
+	
+	public IncomingMessageParser(
+			HashMap<String, MessageSubParser<Message<P>, P>> subParsers) {
+		super();
+		this.subParsers = subParsers;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.automate.protocol.IIncomingMessageParser#parse(java.lang.String)
+	 */
+	@Override
 	public Message<P> parse(String xml) 
 			throws XmlFormatException, IOException, MessageFormatException, SAXException, ParserConfigurationException {
 		if(xml == null) {
@@ -39,6 +52,12 @@ public abstract class IncomingMessageParser<P extends ProtocolParameters> {
 		}
 	}
 	
-	protected abstract MessageSubParser<Message<P>, P> getSubParser(String contentType) throws NoSuchElementException;
+	private MessageSubParser<Message<P>, P> getSubParser(String contentType)  throws NoSuchElementException {
+		 MessageSubParser<Message<P>, P> parser = subParsers.get(contentType);
+		if(parser == null) {
+			throw new NoSuchElementException();
+		}
+		return parser;
+	}
 	
 }

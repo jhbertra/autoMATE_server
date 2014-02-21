@@ -54,12 +54,7 @@ public class NodeToClientMessageHandlerTest {
 
 	@Test(expected=NullPointerException.class)
 	public void testHandleMessage_NullMessage() {
-		subject.handleMessage(1, 0, true, null,	new NodeToClientMessageHandlerParams(0));
-	}
-
-	@Test(expected=NullPointerException.class)
-	public void testHandleMessage_NullParams() {
-		subject.handleMessage(1, 0, true, new MockNodeMessage(parameters), null);
+		subject.handleMessage(1, 0, true, null,	null);
 	}
 
 	@Test
@@ -67,9 +62,10 @@ public class NodeToClientMessageHandlerTest {
 		context.checking(new Expectations() {{
 			oneOf(dbManager).getNodeByUid(0); will(returnValue(new Node(0, "node", 1, 0, "1.0")));
 			oneOf(dbManager).getUserByUid(1); will(returnValue(null));
+			oneOf(securityManager).getNodeId("nodeSession"); will(returnValue(0L));
 		}});
 		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, 
-				new MockNodeMessage(parameters), new NodeToClientMessageHandlerParams(0));
+				new MockNodeMessage(parameters), null);
 		context.assertIsSatisfied();
 		assertEquals(messageUserNotFound, actual);
 	}
@@ -80,9 +76,10 @@ public class NodeToClientMessageHandlerTest {
 			oneOf(dbManager).getNodeByUid(0); will(returnValue(new Node(0, "node", 1, 0, "1.0")));
 			oneOf(dbManager).getUserByUid(1); will(returnValue(new User(1, "user", "Jamie", "O'Bertram", "pass", "email")));
 			oneOf(securityManager).getSessionKeyForUsername("user"); will(returnValue(null));
+			oneOf(securityManager).getNodeId("nodeSession"); will(returnValue(0L));
 		}});
 		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, 
-				new MockNodeMessage(parameters), new NodeToClientMessageHandlerParams(0));
+				new MockNodeMessage(parameters), null);
 		context.assertIsSatisfied();
 		assertEquals(messageUserOffline, actual);
 	}
@@ -93,9 +90,10 @@ public class NodeToClientMessageHandlerTest {
 			oneOf(dbManager).getNodeByUid(0); will(returnValue(new Node(0, "node", 1, 0, "1.0")));
 			oneOf(dbManager).getUserByUid(1); will(returnValue(new User(1, "user", "Jamie", "O'Bertram", "pass", "email")));
 			oneOf(securityManager).getSessionKeyForUsername("user"); will(returnValue("session"));
+			oneOf(securityManager).getNodeId("nodeSession"); will(returnValue(0L));
 		}});
 		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, 
-				new MockNodeMessage(parameters), new NodeToClientMessageHandlerParams(0));
+				new MockNodeMessage(parameters), null);
 		context.assertIsSatisfied();
 		assertEquals(messageOk, actual);
 	}
@@ -104,9 +102,10 @@ public class NodeToClientMessageHandlerTest {
 	public void testHandleMessage_Error1() {
 		context.checking(new Expectations() {{
 			oneOf(dbManager).getNodeByUid(0); will(throwException(new RuntimeException()));
+			oneOf(securityManager).getNodeId("nodeSession"); will(returnValue(0L));
 		}});
 		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, 
-				new MockNodeMessage(parameters), new NodeToClientMessageHandlerParams(0));
+				new MockNodeMessage(parameters), null);
 		context.assertIsSatisfied();
 		assertEquals(messageError, actual);
 	}
@@ -116,9 +115,10 @@ public class NodeToClientMessageHandlerTest {
 		context.checking(new Expectations() {{
 			oneOf(dbManager).getNodeByUid(0); will(returnValue(new Node(0, "node", 1, 0, "1.0")));
 			oneOf(dbManager).getUserByUid(1); will(throwException(new RuntimeException()));
+			oneOf(securityManager).getNodeId("nodeSession"); will(returnValue(0L));
 		}});
 		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, 
-				new MockNodeMessage(parameters), new NodeToClientMessageHandlerParams(0));
+				new MockNodeMessage(parameters), null);
 		context.assertIsSatisfied();
 		assertEquals(messageError, actual);
 	}
@@ -129,9 +129,10 @@ public class NodeToClientMessageHandlerTest {
 			oneOf(dbManager).getNodeByUid(0); will(returnValue(new Node(0, "node", 1, 0, "1.0")));
 			oneOf(dbManager).getUserByUid(1); will(returnValue(new User(1, "user", "Jamie", "O'Bertram", "pass", "email")));
 			oneOf(securityManager).getSessionKeyForUsername("user"); will(throwException(new RuntimeException()));
+			oneOf(securityManager).getNodeId("nodeSession"); will(returnValue(0L));
 		}});
 		Message<ServerProtocolParameters> actual = subject.handleMessage(1, 0, true, 
-				new MockNodeMessage(parameters), new NodeToClientMessageHandlerParams(0));
+				new MockNodeMessage(parameters), null);
 		context.assertIsSatisfied();
 		assertEquals(messageError, actual);
 	}

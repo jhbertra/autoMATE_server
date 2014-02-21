@@ -1,5 +1,7 @@
 package com.automate.server.connectivity;
 
+import java.util.concurrent.ExecutorService;
+
 import com.automate.server.connectivity.ConnectivityWatchdogThread.OnClientTimeoutListener;
 import com.automate.server.connectivity.EngineCallback.ClientPingListener;
 import com.automate.server.messaging.IMessageManager;
@@ -10,9 +12,9 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 	private boolean running;
 	private long interval;
 	private int timeout;
-	private ConnectivityWatchdogThread watchdogThread;
+	private IWatchdogThread watchdogThread;
 	private EngineCallback callback;
-	private Thread executionThread;
+	private ExecutorService executionThreadpool;
 	private final Object loopLock = new Object();
 	private IMessageManager messageManager;
 
@@ -21,7 +23,7 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 	 * @param pingInterval
 	 * @param callback
 	 */
-	public ConnectivityEngine(int pingIntervalSeconds, int timeout, EngineCallback callback) {
+	public ConnectivityEngine(int pingIntervalSeconds, int timeout, EngineCallback callback, ExecutorService executionThreadpool) {
 		if(timeout < 1) {
 			throw new IllegalArgumentException("Minimum timeout is 1 second.");
 		}
@@ -34,9 +36,13 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 		if(callback == null) {
 			throw new NullPointerException("ConnectivityEngine callback was null.");
 		}
+		if(executionThreadpool == null) {
+			throw new NullPointerException("ConnectivityEngine executionThreadpool was null.");
+		}
 		this.interval = pingIntervalSeconds;
 		this.callback = callback;
 		this.timeout = timeout;
+		this.executionThreadpool = executionThreadpool;
 	}
 	
 	/*
@@ -53,7 +59,12 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 		synchronized (loopLock) {
 			running = true;
 		}
-		executionThread.start();
+		executionThreadpool.submit(new Runnable() {
+			@Override
+			public void run() {
+				engineMainLoop();
+			}
+		});
 	}
 
 	void engineMainLoop() {
@@ -122,15 +133,13 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 
 	@Override
 	public void initialize() {
-		this.watchdogThread = new ConnectivityWatchdogThread(this);
-		executionThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				engineMainLoop();
-			}
-		}, "Connectivity Engine");
 	}
 	
+	@Override
+	public void setWatchdogThread(IWatchdogThread watchdogThread) {
+		this.watchdogThread = watchdogThread;
+	}
+
 	@Override
 	public void setMessageManager(IMessageManager messageManager) {
 		this.messageManager = messageManager;

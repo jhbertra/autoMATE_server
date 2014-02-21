@@ -3,7 +3,7 @@ package com.automate.server.connectivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ConnectivityWatchdogThread extends Thread {
+public class ConnectivityWatchdogThread extends Thread implements IWatchdogThread {
 
 	private HashMap<Long, ArrayList<String>> responseTimeoutToClientId = new HashMap<Long, ArrayList<String>>();
 	private HashMap<String, Long> clientIdToTimeout = new HashMap<String, Long>();
@@ -23,6 +23,9 @@ public class ConnectivityWatchdogThread extends Thread {
 
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#run()
+	 */
+	/* (non-Javadoc)
+	 * @see com.automate.server.connectivity.IWatchdogThread#run()
 	 */
 	@Override
 	public void run() {
@@ -49,6 +52,10 @@ public class ConnectivityWatchdogThread extends Thread {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.automate.server.connectivity.IWatchdogThread#setTimeout(java.lang.String, int)
+	 */
+	@Override
 	public void setTimeout(String client, int timeoutDelaySeconds) {
 		long timeout = currentSecond + 1 + timeoutDelaySeconds;
 		synchronized(lock) {
@@ -63,6 +70,10 @@ public class ConnectivityWatchdogThread extends Thread {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.automate.server.connectivity.IWatchdogThread#cancelTimeout(java.lang.String)
+	 */
+	@Override
 	public boolean cancelTimeout(String sessionKey) {
 		synchronized (lock) {
 			if(!clientIdToTimeout.containsKey(sessionKey)) return false;
@@ -76,6 +87,10 @@ public class ConnectivityWatchdogThread extends Thread {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.automate.server.connectivity.IWatchdogThread#cancel()
+	 */
+	@Override
 	public void cancel() {
 		synchronized (lock) {
 			cancelled = true;

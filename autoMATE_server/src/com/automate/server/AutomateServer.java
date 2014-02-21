@@ -11,6 +11,8 @@ import com.automate.protocol.Message.MessageType;
 import com.automate.protocol.MessageSubParser;
 import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.server.connectivity.ConnectivityEngine;
+import com.automate.server.connectivity.ConnectivityWatchdogThread;
+import com.automate.server.connectivity.ConnectivityWatchdogThread.OnClientTimeoutListener;
 import com.automate.server.connectivity.IConnectivityManager;
 import com.automate.server.database.DatabaseManager;
 import com.automate.server.database.IDatabaseManager;
@@ -75,6 +77,7 @@ public class AutomateServer {
 			dbManager.initialize();
 			securityManager.initialize();
 			connectivityManager.initialize();
+			connectivityManager.setWatchdogThread(new ConnectivityWatchdogThread((OnClientTimeoutListener) connectivityManager));
 			messageManager.initialize();
 		} catch(Exception e) {
 			System.out.println("Error initializing managers.");

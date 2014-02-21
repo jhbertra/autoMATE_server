@@ -63,7 +63,7 @@ public class Managers {
 	}
 	
 	public static IConnectivityManager newConnectivityManager(EngineCallback callback) {
-		return new ConnectivityEngine(30, 15, callback);
+		return new ConnectivityEngine(30, 15, callback, Executors.newSingleThreadExecutor());
 	}
 	
 }

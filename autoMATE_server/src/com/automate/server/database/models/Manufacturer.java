@@ -22,6 +22,16 @@ public class Manufacturer {
 		this.uid = uid;
 		this.name = name;
 		this.informationUrl = informationurl;
-		
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Manufacturer) {
+			return 	this.uid == ((Manufacturer)obj).uid &&
+					this.name.equals(((Manufacturer)obj).name) &&
+					this.informationUrl.equals(((Manufacturer)obj).informationUrl);
+		} else return false;
+	}
+	
+	
 }

@@ -17,6 +17,7 @@ import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.protocol.client.messages.ClientCommandMessage;
 import com.automate.protocol.client.messages.ClientStatusUpdateMessage;
 import com.automate.protocol.server.ServerProtocolParameters;
+import com.automate.server.InitializationException;
 import com.automate.server.connectivity.IConnectivityManager;
 import com.automate.server.messaging.handlers.AuthenticationMessageHandlerParams;
 import com.automate.server.messaging.handlers.ClientToNodeMessageHandlerParams;
@@ -61,7 +62,7 @@ public class MessageManager implements IMessageManager {
 	}
 
 	@Override
-	public void initialize() throws Exception {
+	public void initialize()  throws InitializationException {
 		this.connectivityManager.setMessageManager(this);
 		this.receiveThread.setManager(this);
 	}

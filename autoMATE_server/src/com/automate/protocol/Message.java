@@ -16,7 +16,8 @@ public abstract class Message <P extends ProtocolParameters> extends XmlConverti
 		STATUS_UPDATE_CLIENT,
 		STATUS_UPDATE_NODE,
 		WARNING_CLIENT,
-		WARNING_NODE;
+		WARNING_NODE, 
+		REGISTER_NODE;
 
 		/* (non-Javadoc)
 		 * @see java.lang.Enum#toString()

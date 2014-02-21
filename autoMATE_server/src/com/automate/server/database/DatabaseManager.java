@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
 
+import com.automate.server.InitializationException;
 import com.automate.server.database.models.Node;
 import com.automate.server.database.models.Manufacturer;
 import com.automate.server.database.models.Model;
@@ -189,7 +190,7 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
-	public void initialize() throws Exception {
+	public void initialize() throws InitializationException {
 	}
 
 	@Override

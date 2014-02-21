@@ -30,40 +30,30 @@ import com.automate.server.security.SecurityManagerImpl;
 
 public class Managers {
 
-	public static IMessageManager newMessageManager(
-			ISecurityManager securityManager, 
-			IConnectivityManager connectivityManager, 
-			int minorVersion, 
-			int majorVersion, 
-			HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers,
-			HashMap<String, MessageSubParser<Message<ClientProtocolParameters>, ClientProtocolParameters>> subParsers) {
-		IPacketReceiveThread receiveThread = new PacketReceiveThread(Executors.newFixedThreadPool(25));
-		ExecutorService packetSendThreadpool = Executors.newFixedThreadPool(25);
-		IIncomingMessageParser<ClientProtocolParameters> parser = new IncomingMessageParser<ClientProtocolParameters>(subParsers);
+	public static IMessageManager newMessageManager(MessageManagerParameters params) {
+		IPacketReceiveThread receiveThread = new PacketReceiveThread(Executors.newFixedThreadPool(params.numReceiveThreads));
+		ExecutorService packetSendThreadpool = Executors.newFixedThreadPool(params.numSendThreads);
+		IIncomingMessageParser<ClientProtocolParameters> parser = new IncomingMessageParser<ClientProtocolParameters>(params.subParsers);
 		ISocket.Factory socketFactory = new Factory() {
 			@Override
 			public ISocket newInstance(String host, int port) {
 				return new SocketInjector(host, port);
 			}
 		};
-		return new MessageManager(securityManager, connectivityManager, receiveThread, packetSendThreadpool, 
-				parser, handlers, socketFactory, minorVersion, majorVersion);
+		return new MessageManager(params.securityManager, params.connectivityManager, receiveThread, packetSendThreadpool, 
+				parser, params.handlers, socketFactory, params.minorVersion, params.majorVersion);
 	}
 	
-	public static ISecurityManager newSecurityManager(
-			ISessionManager sessionManager, 
-			IDatabaseManager dbManager, 
-			int majorVersion, 
-			int minorVersion) {
-		return new SecurityManagerImpl(sessionManager, dbManager, majorVersion, minorVersion);
+	public static ISecurityManager newSecurityManager(SecurityManagerParameters params) {
+		return new SecurityManagerImpl(params.sessionManager, params.dbManager, params.majorVersion, params.minorVersion);
 	}
 	
 	public static IDatabaseManager newDatabaseManager(Connection connection) {
 		return new DatabaseManager(connection);
 	}
 	
-	public static IConnectivityManager newConnectivityManager(EngineCallback callback) {
-		return new ConnectivityEngine(30, 15, callback, Executors.newSingleThreadExecutor());
+	public static IConnectivityManager newConnectivityManager(ConnectivityEngineParameters params) {
+		return new ConnectivityEngine(params.pingInterval, params.timeout, params.callback, params.executorService);
 	}
 	
 }

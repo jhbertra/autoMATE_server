@@ -1,6 +1,7 @@
 package com.automate.server.security;
 
 import com.automate.protocol.client.ClientProtocolParameters;
+import com.automate.server.InitializationException;
 import com.automate.server.database.IDatabaseManager;
 import com.automate.server.database.models.User;
 
@@ -40,7 +41,7 @@ public class SecurityManagerImpl implements ISecurityManager {
 	}
 
 	@Override
-	public void initialize() throws Exception {
+	public void initialize()  throws InitializationException {
 
 	}
 

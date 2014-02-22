@@ -61,7 +61,7 @@ public class ServerClientWarningMessage extends Message<ServerProtocolParameters
 
 	@Override
 	public com.automate.protocol.Message.MessageType getMessageType() {
-		return MessageType.WARNING;
+		return MessageType.WARNING_NODE;
 	}
 
 	/* (non-Javadoc)

@@ -10,32 +10,21 @@ public abstract class Message <P extends ProtocolParameters> extends XmlConverti
 	public static enum MessageType {
 		AUTHENTICATION,
 		NODE_LIST,
-		COMMAND,
+		COMMAND_CLIENT,
+		COMMAND_NODE,
 		PING,
-		STATUS_UPDATE,
-		WARNING;
+		STATUS_UPDATE_CLIENT,
+		STATUS_UPDATE_NODE,
+		WARNING_CLIENT,
+		WARNING_NODE, 
+		REGISTER_NODE;
 
 		/* (non-Javadoc)
 		 * @see java.lang.Enum#toString()
 		 */
 		@Override
 		public String toString() {
-			switch(this.ordinal()) {
-			case 0:
-				return Message.AUTHENTICATION;
-			case 1:
-				return Message.NODE_LIST;
-			case 2:
-				return Message.COMMAND;
-			case 3:
-				return Message.PING;
-			case 4:
-				return Message.STATUS_UPDATE;
-			case 5:
-				return Message.WARNING;
-				default:
-					return null;
-			}
+			return super.toString().toLowerCase().replace('_', '-');
 		}
 		
 	}

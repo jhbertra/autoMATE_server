@@ -1,4 +1,4 @@
-package com.automate.server.security;
+package com.automate.server.messaging;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -6,10 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses(value = {
-		SecurityManagerImplTest.class,
-		SessionManagerTest.class,
-		SecurityIntegrationTest.class
+		MessageManagerTest.class
 })
-public class SecuritySuite {
+public class MessagingSuite {
 
 }

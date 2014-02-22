@@ -5,8 +5,10 @@ import com.automate.server.messaging.IMessageManager;
 
 public interface IConnectivityManager extends IManager {
 
-	boolean handleClientPing(String sessionKey);
+	public boolean handleClientPing(String sessionKey);
 
-	void setMessageManager(IMessageManager messageManager);
+	public void setMessageManager(IMessageManager messageManager);
+
+	public void setWatchdogThread(IWatchdogThread watchdogThread);
 	
 }

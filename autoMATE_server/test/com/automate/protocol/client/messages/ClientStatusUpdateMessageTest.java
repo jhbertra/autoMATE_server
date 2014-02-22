@@ -21,7 +21,7 @@ public class ClientStatusUpdateMessageTest {
 		} catch (XmlFormatException e) {
 			fail(e.getMessage());
 		}
-		String expected = 	"content-type:status-update\n" +
+		String expected = 	"content-type:status-update-client\n" +
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 							"<message >\n" +
 							"\t<parameters >\n" +

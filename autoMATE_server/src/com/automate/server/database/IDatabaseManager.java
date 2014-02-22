@@ -27,7 +27,7 @@ public interface IDatabaseManager extends IManager {
 	 * Node queries.
 	 */
 	Node getNodeByUid(long nodeId);
-	List<Node> getClientNodeList(long userId);
+	List<Node> getClientNodeList(String username);
 
 	/*.
 	 * Model queries

@@ -5,16 +5,24 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
 
-public class PacketReceiveThread extends Thread {
+public class PacketReceiveThread extends Thread implements IPacketReceiveThread {
 
 	private ExecutorService threadpool;
 	private boolean cancelled;
 	private IMessageManager manager;
+	
+	/* (non-Javadoc)
+	 * @see com.automate.server.messaging.IPacketReceiveThread#setManager(com.automate.server.messaging.IMessageManager)
+	 */
+	@Override
+	public void setManager(IMessageManager manager) {
+		this.manager = manager;
+	}
+
 	private ServerSocket serverSocket;
 	
-	public PacketReceiveThread(ExecutorService threadpool, IMessageManager manager) {
+	public PacketReceiveThread(ExecutorService threadpool) {
 		this.threadpool = threadpool;
-		this.manager = manager;
 	}
 
 	/* (non-Javadoc)
@@ -35,6 +43,10 @@ public class PacketReceiveThread extends Thread {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.automate.server.messaging.IPacketReceiveThread#cancel()
+	 */
+	@Override
 	public void cancel() {
 		this.cancelled = true;
 		if(serverSocket != null && !serverSocket.isClosed()) {

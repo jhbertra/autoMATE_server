@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
 
+import com.automate.server.InitializationException;
 import com.automate.server.database.models.Node;
 import com.automate.server.database.models.Manufacturer;
 import com.automate.server.database.models.Model;
@@ -29,13 +30,20 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
-	public List<com.automate.server.database.models.Node> getClientNodeList(
-			long userId) {
-		if(userId < 0){
+	public List<com.automate.server.database.models.Node> getClientNodeList(String username) {
+		if(username == null){
 			throw new IllegalArgumentException("Invalid user id.");
 		}
+		
 		Statement stmt = null;
-		String sqlQuery = "select * from node where user_id = " + userId;
+		String sqlQuery = 
+					"select * "
+				+ 	"from node "
+				+ 	"where user_id = "
+				+ 		"select uid"
+				+ 		"from user"
+				+ 		"where username = \"" + username + "\"";
+		
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
@@ -182,7 +190,7 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
-	public void initialize() throws Exception {
+	public void initialize() throws InitializationException {
 	}
 
 	@Override

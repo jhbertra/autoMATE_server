@@ -66,8 +66,8 @@ public class DatabaseManager implements IDatabaseManager {
 		}
 		catch(SQLException e){
 			logger.error("Error in getClientNodeList.", e);
+			return null;
 		}
-		return null;
 		
 	}
 
@@ -119,7 +119,7 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
-	public com.automate.server.database.models.Node getNodeByUid(long nodeId) {
+	public Node getNodeByUid(long nodeId) {
 		if(nodeId < 0){
 			throw new IllegalArgumentException("Invalid node id " +  nodeId);
 		}
@@ -148,7 +148,7 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid user id " +  userId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "select * from users where username = " + userId; 
+		String sqlQuery = "select * from users where uid = " + userId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);

@@ -1,7 +1,14 @@
-<project name="autoMATE Server" >
+<project name="autoMATE Server" default="clean-dist">
 	<property name="src" location="src"/>
 	<property name="build" location="build"/>
 	<property name="dist" location="dist"/>
+	<property name="app.name" value="autoMATE_server" />
+	
+	<path id="classpath">
+		<fileset dir="lib/">
+		    <include name="*.jar"/>
+		</fileset>
+	</path>
 	
 	<target name="init">
 		<mkdir dir="${build}"/>
@@ -9,8 +16,32 @@
 	
 	<target name="build" depends="init" description="Compiles the source code into class files." >
 		<javac srcdir="${src}" destdir="${build}">
-			
+			<classpath refid="classpath"/>
 		</javac>
 	</target>
+	
+	<target name="dist" depends="build" description="Packs the compiled program into a jar file.">
+		<mkdir dir="${dist}"/>
+		<jar jarfile="${dist}/${app.name}.jar" basedir="${build}">
+		    <restrict>
+		    	<name name="**/*.class"/>
+		    	<archives>
+		    		<zips>
+		        		<fileset dir="lib/" includes="*.jar"/>
+		      		</zips>
+		    	</archives>
+		    </restrict>
+			<manifest>
+				<attribute name="Main-Class" value="com.automate.server.ServerMain"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="clean" description="Cleans the build and dist directories.">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+	
+	<target name="clean-dist" depends="clean, dist" description="cleans and builds the jar."/>
 	
 </project>

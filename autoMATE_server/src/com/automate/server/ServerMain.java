@@ -31,7 +31,7 @@ public class ServerMain {
 	 * 
 	 */
 	public static void main(String[] args) {
-		System.setProperty("log4j.configurationFile", "config/log4j2.xml");
+		System.setProperty("log4j.configurationFile", "../config/log4j2.xml");
 		Logger logger = LogManager.getLogger();
 		logger.info("==> AUTOMATE SERVER START\n");
 		if(args.length < 1) {

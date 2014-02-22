@@ -42,12 +42,9 @@ public class DatabaseManager implements IDatabaseManager {
 		
 		Statement stmt = null;
 		String sqlQuery = 
-					"select * "
-				+ 	"from node "
-				+ 	"where user_id = "
-				+ 		"select uid"
-				+ 		"from user"
-				+ 		"where username = \"" + username + "\"";
+					"SELECT * "
+				+ 	"FROM node "
+				+ 	"WHERE user_id = (SELECT uid FROM user WHERE username = \"" + username + "\")";
 		
 		try{
 			stmt = connection.createStatement();
@@ -77,7 +74,7 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid manufacturer id " +  manufacturerId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "select * from manufacturer where uid = " + manufacturerId; 
+		String sqlQuery = "SELECT * FROM manufacturer WHERE uid = " + manufacturerId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
@@ -100,7 +97,7 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid model id " +  modelId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "select * from model where uid = " + modelId; 
+		String sqlQuery = "SELECT * FROM model WHERE uid = " + modelId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
@@ -124,7 +121,7 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid node id " +  nodeId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "select * from node where uid = " + nodeId; 
+		String sqlQuery = "SELECT * FROM node WHERE uid = " + nodeId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
@@ -148,7 +145,7 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid user id " +  userId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "select * from users where uid = " + userId; 
+		String sqlQuery = "SELECT * FROM users WHERE uid = " + userId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
@@ -175,7 +172,7 @@ public class DatabaseManager implements IDatabaseManager {
 		}
 		
 		Statement stmt = null;
-		String sqlQuery = "select * from users where username = \"" + username + "\""; 
+		String sqlQuery = "SELECT * FROM users WHERE username = \"" + username + "\""; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);

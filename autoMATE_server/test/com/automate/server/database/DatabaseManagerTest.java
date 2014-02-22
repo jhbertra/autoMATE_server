@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.management.RuntimeErrorException;
 
@@ -144,7 +146,7 @@ public class DatabaseManagerTest {
 		context.assertIsSatisfied();
 	}
 	
-	
+	@Test
 	public void testGetUserByUid_NotFound() throws SQLException{
 		context.checking(new Expectations(){
 			{
@@ -157,7 +159,7 @@ public class DatabaseManagerTest {
 		context.assertIsSatisfied();
 	}
 	
-	
+	@Test
 	public void testGetUserByUid_Found() throws SQLException{
 		context.checking(new Expectations(){
 			{
@@ -176,6 +178,7 @@ public class DatabaseManagerTest {
 		context.assertIsSatisfied();
 	}
 	
+	@Test
 	public void testGetUserByUsername_NotFound() throws SQLException{
 		context.checking(new Expectations(){
 			{
@@ -188,6 +191,7 @@ public class DatabaseManagerTest {
 		context.assertIsSatisfied();
 	}
 	
+	@Test
 	public void testGetUserByUsername_Found() throws SQLException{
 		context.checking(new Expectations(){
 			{
@@ -205,5 +209,47 @@ public class DatabaseManagerTest {
 		assertEquals(expected, subject.getUserByUid(0));
 		context.assertIsSatisfied();
 	}
+	
+	@Test
+	public void testGetClientNodeList_Found() throws SQLException{
+		context.checking(new Expectations(){
+			{
+				String query = 
+						"SELECT * "
+					+ 	"FROM node "
+					+ 	"WHERE user_id = (SELECT uid FROM user WHERE username = testUser)";
+				oneOf(connection).createStatement(); will(returnValue(stmt));
+				oneOf(stmt).executeQuery(query); will(returnValue(rtSet));
+				oneOf(rtSet).getLong("uid"); will(returnValue(0L));
+				oneOf(rtSet).getString("name"); will(returnValue("someName"));
+				oneOf(rtSet).getLong("user_id"); will(returnValue(0L));
+				oneOf(rtSet).getLong("model_id"); will(returnValue(0L));
+				oneOf(rtSet).getString("maxVersion"); will(returnValue("0"));
+			}
+		});
+		Node expectedNode = new Node(0, "someName", 0, 0, "0");
+		List<Node> expectedList = new ArrayList<Node>();
+		expectedList.add(expectedNode);
+		assertEquals(expectedList, subject.getClientNodeList("testUser"));
+		context.assertIsSatisfied();
+	}
+	
+	@Test
+	public void testGetClientNodeList_NotFound() throws SQLException{
+		context.checking(new Expectations(){
+			{
+				String query = 
+						"SELECT * "
+					+ 	"FROM node "
+					+ 	"WHERE user_id = (SELECT uid FROM user WHERE username = testUser)";
+				oneOf(connection).createStatement(); will(returnValue(stmt));
+				oneOf(stmt).executeQuery(query); will(returnValue(rtSet));
+				oneOf(rtSet).getLong("uid"); will(throwException(new SQLException()));
+			}
+		});
+		assertNull(subject.getClientNodeList("testUser"));
+		context.assertIsSatisfied();
+	}
+	
 	
 }

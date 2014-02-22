@@ -1,0 +1,16 @@
+<project name="autoMATE Server" >
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+	
+	<target name="init">
+		<mkdir dir="${build}"/>
+	</target>
+	
+	<target name="build" depends="init" description="Compiles the source code into class files." >
+		<javac srcdir="${src}" destdir="${build}">
+			
+		</javac>
+	</target>
+	
+</project>

@@ -1,5 +1,8 @@
 package com.automate.server.security;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.server.InitializationException;
 import com.automate.server.database.IDatabaseManager;
@@ -18,6 +21,8 @@ public class SecurityManagerImpl implements ISecurityManager {
 	private int majorVersion;
 	private int minorVersion;
 
+	private static final Logger logger = LogManager.getLogger();
+	
 	/**
 	 * Creates a new SecurityManagerImpl
 	 * @param sessionManager the manager for session data
@@ -73,7 +78,7 @@ public class SecurityManagerImpl implements ISecurityManager {
 				return sessionManager.createNewAppSession(username, ipAddress);
 			}
 		} catch(Exception e) {
-			// allow method to return null TODO log error.
+			logger.error("Error authenticating client" + username + ".", e);
 		}
 		return null;
 	}

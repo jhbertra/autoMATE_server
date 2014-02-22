@@ -19,7 +19,7 @@ public interface EngineCallback {
 	 * Tells the callback to ping all the clients
 	 * @param listener - a listener that is called every time a client is pinged.
 	 */
-	public void pingAllClients(ClientPingListener listener, IMessageManager messageManager);
+	public int pingAllClients(ClientPingListener listener, IMessageManager messageManager);
 	
 	
 	/**

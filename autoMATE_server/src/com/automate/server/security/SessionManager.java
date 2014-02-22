@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.protocol.server.messages.ServerPingMessage;
@@ -41,6 +43,8 @@ public class SessionManager implements ISessionManager, EngineCallback {
 	
 	private static final String SALT = "jf849jow84u384hw83487w43w904fgsi874yfs";
 
+	private static final Logger logger = LogManager.getLogger();
+	
 	public SessionManager(int majorVersion, int minorVersion) {
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;
@@ -60,7 +64,8 @@ public class SessionManager implements ISessionManager, EngineCallback {
 
 	@Override
 	public void connectionLost(String sessionKey) {
-		synchronized (lock) {			
+		synchronized (lock) {
+			logger.trace("Lost connection for session {}.", sessionKey);
 			pingedClients.remove(sessionKey);
 			activeSessions.remove(sessionKey);
 		}
@@ -171,7 +176,7 @@ public class SessionManager implements ISessionManager, EngineCallback {
 	}
 
 	@Override
-	public void pingAllClients(final ClientPingListener listener, IMessageManager messageManager) {
+	public int pingAllClients(final ClientPingListener listener, IMessageManager messageManager) {
 		synchronized (lock) {			
 			Set<String> activeSessions = this.activeSessions.keySet();
 			Set<String> pingedClients = this.pingedClients.keySet();
@@ -186,6 +191,7 @@ public class SessionManager implements ISessionManager, EngineCallback {
 							});
 				}
 			}
+			return activeSessions.size() - pingedClients.size();
 		}
 	}
 

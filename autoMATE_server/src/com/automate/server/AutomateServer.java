@@ -8,6 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.automate.protocol.Message;
 import com.automate.protocol.Message.MessageType;
 import com.automate.protocol.MessageSubParser;
@@ -45,17 +48,17 @@ public class AutomateServer {
 	 * The subsystem responsible for all database interactions.
 	 */
 	private IDatabaseManager dbManager;
-	
+
 	/**
 	 * flag to indicate if the server is running
 	 */
 	private boolean running = false;
-	
+
 	/**
 	 * flag to indicate if the server has been initialized
 	 */
 	private boolean initialized = false;
-	
+
 	/**
 	 * Major version of the maximum supported protocol version.
 	 */
@@ -64,17 +67,17 @@ public class AutomateServer {
 	 * Minor version of the maximum supported protocol version.
 	 */
 	private int minorVersion = 0;
-	
+
 	/**
 	 * Api object for use by user interfaces.
 	 */
 	private Api api;
-	
+
 	/**
 	 * The properties object containing all information about the server.
 	 */
 	private Properties properties;
-	
+
 	/**
 	 * The connection to the dbms.
 	 */
@@ -91,7 +94,9 @@ public class AutomateServer {
 	 * Parameters for creating and configuring the message manager.
 	 */
 	private MessageManagerParameters messagingParams;
-	
+
+	private static final Logger logger = LogManager.getLogger();
+
 	/**
 	 * Creates a new {@link AutomateServer}
 	 * @param properties the properties that define the server's configurable behaviour.
@@ -99,11 +104,11 @@ public class AutomateServer {
 	public AutomateServer() {
 		this.api = new Api();
 	}
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// PROPERTY READING 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	private void readProperties() throws InitializationException {
 		readDatabaseProperties();
 		readVersionProperties();
@@ -120,22 +125,22 @@ public class AutomateServer {
 		} else if(numSendThreadsString == null) {
 			throw new InitializationException("Property not defined: messaging.sendThreads");
 		}
-		
+
 		int numReceiveThreads;
 		int numSendThreads;
-		
+
 		try {
 			numReceiveThreads = Integer.parseInt(numReceiveThreadsString);
 		} catch(NumberFormatException e) {
 			throw new InitializationException("Error parsing messaging properties: receiveThreads malformed: messaging.receiveThreads = " + numReceiveThreadsString);
 		}
-		
+
 		try {
 			numSendThreads = Integer.parseInt(numSendThreadsString);
 		} catch(NumberFormatException e) {
 			throw new InitializationException("Error parsing messaging properties: sendThreads malformed: messaging.sendThreads = " + numSendThreadsString);
 		}
-		
+
 		this.messagingParams = new MessageManagerParameters(numReceiveThreads, numSendThreads, getMessageSubParsers(), securityManager, 
 				connectivityManager, getMessageHandlers(), minorVersion, majorVersion);
 	}
@@ -143,15 +148,17 @@ public class AutomateServer {
 	private void readConnectivityProperties() throws InitializationException {
 		String timeoutString = properties.getProperty("connectivity.timeout");
 		String intervalString = properties.getProperty("connectivity.heartbeat");
+		logger.trace("Connectivity engine timeout: {} seconds", timeoutString);
+		logger.trace("Connectivity engine ping interval: {} seconds", intervalString);
 		if(timeoutString == null) {
 			throw new InitializationException("Property not defined: connectivity.timeout");
 		} else if(intervalString == null) {
 			throw new InitializationException("Property not defined: connectivity.heartbeat");
 		}
-		
+
 		int timeout;
 		int pingInterval;
-		
+
 		try {
 			timeout = Integer.parseInt(timeoutString);
 		} catch(NumberFormatException e) {
@@ -162,7 +169,7 @@ public class AutomateServer {
 		} catch(NumberFormatException e) {
 			throw new InitializationException("Error parsing connectivity properties: heartbeat malformed: connectivity.heartbeat = " + intervalString);
 		}
-		
+
 		EngineCallback callback = (EngineCallback) this.messageManager;
 		ExecutorService executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
 			@Override
@@ -170,7 +177,7 @@ public class AutomateServer {
 				return new Thread(runnable, "Connectivity Engine");
 			}
 		});
-		
+
 		this.connectivityParams = new ConnectivityEngineParameters(executorService, callback, timeout, pingInterval);
 	}
 
@@ -182,6 +189,7 @@ public class AutomateServer {
 	private void readVersionProperties() throws InitializationException {
 		String majorVersionString = properties.getProperty("version.major");
 		String minorVersionString = properties.getProperty("version.minor");
+		logger.trace("Protocol version: {}.{}", majorVersionString, minorVersionString);
 		if(majorVersionString == null) {
 			throw new InitializationException("Property not defined: version.major");
 		} else if(minorVersionString == null) {
@@ -205,6 +213,11 @@ public class AutomateServer {
 		String dbms = properties.getProperty("database.dbms");
 		String serverName = properties.getProperty("database.server");
 		String portNumber = properties.getProperty("database.port");
+		logger.trace("Database username: {}", username);
+		logger.trace("Database password: {}", password);
+		logger.trace("Database dbms: {}", dbms);
+		logger.trace("Database server: {}", serverName);
+		logger.trace("Database port: {}", portNumber);
 		if(username == null) {
 			throw new InitializationException("Property not defined: database.username");
 		} else if(password == null) {
@@ -222,11 +235,11 @@ public class AutomateServer {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// END PROPERTY READING 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// INITIALIZATION ROUTINES 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Defines new properties for this server, overwriting the previous properties.
 	 * Server must be re-initialized afterwards.
@@ -238,52 +251,67 @@ public class AutomateServer {
 		this.properties = properties;
 		this.initialized = false;
 	}
-	
+
 	/**
 	 * Creates and initialises the application subsystems.
 	 * @throws InitializationException if an error occurs during initialisation.
 	 * @throws IllegalStateException if the properties have not been set.
 	 */
 	public void initSubsystems() throws InitializationException {
-		if(properties == null) {
-			throw new IllegalStateException("Must set server properties before initializing!");
-		}
-		if(initialized) return;
-		readProperties();
-		
-		Connection connection = connectToDbms();
-		dbManager = Managers.newDatabaseManager(connection);
-		securityManager = Managers.newSecurityManager(securityParams);
-		connectivityManager = Managers.newConnectivityManager(connectivityParams);
-		messageManager = Managers.newMessageManager(messagingParams);		
-		
 		try {
-			dbManager.initialize();
-			securityManager.initialize();
-			connectivityManager.initialize();
-			connectivityManager.setWatchdogThread(new ConnectivityWatchdogThread((OnClientTimeoutListener) connectivityManager));
-			messageManager.initialize();
-		} catch(RuntimeException e) {
-			throw new InitializationException("Unexpected exception initializing subsystems.", e);
+			if(properties == null) {
+				throw new IllegalStateException("Must set server properties before initializing!");
+			}
+			logger.trace("Initialization started.");
+			if(initialized) {
+				return;
+			}
+			readProperties();
+
+			Connection connection = connectToDbms();
+			logger.trace("Creating database manager.");
+			dbManager = Managers.newDatabaseManager(connection);
+			logger.trace("Creating security manager.");
+			securityManager = Managers.newSecurityManager(securityParams);
+			logger.trace("Creating connectivity manager.");
+			connectivityManager = Managers.newConnectivityManager(connectivityParams);
+			logger.trace("Creating message manager.");
+			messageManager = Managers.newMessageManager(messagingParams);		
+
+			try {
+				dbManager.initialize();
+				securityManager.initialize();
+				connectivityManager.initialize();
+				connectivityManager.setWatchdogThread(new ConnectivityWatchdogThread((OnClientTimeoutListener) connectivityManager));
+				messageManager.initialize();
+			} catch(RuntimeException e) {
+				throw new InitializationException("Unexpected exception initializing subsystems.", e);
+			}
+			initialized = true;
+		} finally {
+			if(!initialized) logger.trace("Initialization aborted.");
+			else logger.trace("Initialization ended.");
 		}
-		initialized = true;
 	}
-	
+
 	private Connection connectToDbms() throws InitializationException {
 		try {
+			logger.info("Attempting to connect to dbms...");
 			return dbmsConnection.createConnection();
 		} catch (SQLException e) {
 			throw new InitializationException(e);
 		}
 	}
-	
+
 	private HashMap<String, MessageSubParser<Message<ClientProtocolParameters>, ClientProtocolParameters>> getMessageSubParsers() {
+		logger.trace("Configuring message sub parsers.");
 		HashMap<String, MessageSubParser<Message<ClientProtocolParameters>,ClientProtocolParameters>> subParsers = 
 				new HashMap<String, MessageSubParser<Message<ClientProtocolParameters>,ClientProtocolParameters>>();
 		return subParsers;
 	}
 
 	private HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> getMessageHandlers() {
+		logger.trace("Configuring message handlers.");
 		HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers =
 				new HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>>();
 		return handlers;
@@ -292,11 +320,11 @@ public class AutomateServer {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// END INITIALIZATION ROUTINES 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// POST INITIALIZATION ROUTINES 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Starts the server.
 	 * @throws IllegalStateException if the server is already running
@@ -306,10 +334,12 @@ public class AutomateServer {
 		if(!initialized) throw new IllegalStateException("Server not initialized!");
 		if(!running) {
 			try {
+				logger.info("Starting server...");
 				dbManager.start();
 				securityManager.start();
 				connectivityManager.start();
 				messageManager.start();
+				logger.info("Server started.");
 				running = true;
 			} catch (Exception e) {
 				System.out.println("Error starting server");
@@ -319,7 +349,7 @@ public class AutomateServer {
 			throw new IllegalStateException("Cannot start server twice!");
 		}
 	}
-	
+
 	/**
 	 * Shuts down the server.
 	 * @throws IllegalStateException if the server is shutdown before it is started.
@@ -327,10 +357,12 @@ public class AutomateServer {
 	public void shutdown() {
 		if(running) {
 			try {
+				logger.info("Shutting down server...");
 				dbManager.terminate();
 				securityManager.terminate();
 				connectivityManager.terminate();
 				messageManager.terminate();
+				logger.info("Server shut down.");
 				running = false;
 			} catch (Exception e) {
 				System.out.println("Error stopping server");
@@ -340,7 +372,7 @@ public class AutomateServer {
 			throw new IllegalStateException("Server not started, cannot shut down!");
 		}
 	}
-	
+
 	/**
 	 * @return the api
 	 */
@@ -355,13 +387,13 @@ public class AutomateServer {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// API METHODDS 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	public class Api {
-		
+
 		public void shutdown() {
 			AutomateServer.this.shutdown();
 		}
-		
+
 	}
-	
+
 }

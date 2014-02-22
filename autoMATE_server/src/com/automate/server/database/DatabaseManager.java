@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.automate.server.InitializationException;
 import com.automate.server.database.models.Node;
 import com.automate.server.database.models.Manufacturer;
@@ -18,6 +21,8 @@ public class DatabaseManager implements IDatabaseManager {
 
 	private Connection connection;
 
+	private static final Logger logger = LogManager.getLogger();
+	
 	/**
 	 * Creates a new DatabaseManager
 	 * @param connection the connection to the database.
@@ -60,7 +65,7 @@ public class DatabaseManager implements IDatabaseManager {
 			return rtNodeList;
 		}
 		catch(SQLException e){
-			//TODO: Log error
+			logger.error("Error in getClientNodeList.", e);
 		}
 		return null;
 		
@@ -83,7 +88,7 @@ public class DatabaseManager implements IDatabaseManager {
 			return rtMnfr;
 		}
 		catch(SQLException e){
-			//TODO: Log error
+			logger.error("Error in getManufacturerByUid.", e);
 			return null;
 		}
 		
@@ -108,7 +113,7 @@ public class DatabaseManager implements IDatabaseManager {
 			return rtModel;
 		}
 		catch(SQLException e){
-			//TODO: Log error
+			logger.error("Error in getModelByUid.", e);
 			return null;
 		}
 	}
@@ -132,7 +137,7 @@ public class DatabaseManager implements IDatabaseManager {
 			return rtNode;
 		}
 		catch(SQLException e){
-			//TODO: Log error
+			logger.error("Error in getNodeByUid.", e);
 			return null;
 		}
 	}
@@ -157,7 +162,7 @@ public class DatabaseManager implements IDatabaseManager {
 			return rtUser;
 		}
 		catch(SQLException e){
-			//TODO: Log error
+			logger.error("Error in getUserByUid.", e);
 			return null;
 		}
 	}
@@ -184,7 +189,7 @@ public class DatabaseManager implements IDatabaseManager {
 			return rtUser;
 		}
 		catch(SQLException e){
-			//TODO: Log error
+			logger.error("Error in getUserByUsername.", e);
 			return null;
 		}
 	}
@@ -199,6 +204,7 @@ public class DatabaseManager implements IDatabaseManager {
 
 	@Override
 	public void terminate() throws Exception {
+		logger.info("Shutting down database manager...");
 		connection.close();
 	}
 

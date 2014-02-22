@@ -3,6 +3,9 @@ package com.automate.server.connectivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ConnectivityWatchdogThread extends Thread implements IWatchdogThread {
 
 	private HashMap<Long, ArrayList<String>> responseTimeoutToClientId = new HashMap<Long, ArrayList<String>>();
@@ -16,6 +19,8 @@ public class ConnectivityWatchdogThread extends Thread implements IWatchdogThrea
 	private boolean cancelled;
 	
 	private OnClientTimeoutListener listener;
+	
+	private static final Logger logger = LogManager.getLogger();
 	
 	public ConnectivityWatchdogThread(OnClientTimeoutListener listener) {
 		this.listener = listener;
@@ -43,7 +48,7 @@ public class ConnectivityWatchdogThread extends Thread implements IWatchdogThrea
 				long nextWakeTime = startTime + currentSecond * 1000;
 				long sleepTime = nextWakeTime - System.currentTimeMillis();
 				if(sleepTime < 0) {
-					System.out.println("ConnectivityWatchdogThread loop took longer than one second.  Resuming immediately.");
+					logger.warn("ConnectivityWatchdogThread loop took longer than one second.  Resuming immediately.");
 				}
 				try {
 					lock.wait(Math.max(0, sleepTime));

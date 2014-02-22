@@ -2,6 +2,9 @@ package com.automate.server.connectivity;
 
 import java.util.concurrent.ExecutorService;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.automate.server.connectivity.ConnectivityWatchdogThread.OnClientTimeoutListener;
 import com.automate.server.connectivity.EngineCallback.ClientPingListener;
 import com.automate.server.messaging.IMessageManager;
@@ -18,6 +21,8 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 	private final Object loopLock = new Object();
 	private IMessageManager messageManager;
 
+	private static final Logger logger = LogManager.getLogger();
+	
 	/**
 	 * Creates a new Connectivity engine.
 	 * @param pingInterval
@@ -59,6 +64,7 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 		synchronized (loopLock) {
 			running = true;
 		}
+		logger.info("Starting connectivity engine...");
 		executionThreadpool.submit(new Runnable() {
 			@Override
 			public void run() {
@@ -83,12 +89,13 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 	}
 
 	void loopDelegate() {
-		callback.pingAllClients(new ClientPingListener() { // tell the callback to ping all the clients
+		int pingedClients = callback.pingAllClients(new ClientPingListener() { // tell the callback to ping all the clients
 			@Override
 			public void clientPinged(String id) {
 				watchdogThread.setTimeout(id, timeout);
 			}
 		}, messageManager);
+		logger.trace("Pinged {} clients.", pingedClients);
 	}
 
 	/**
@@ -111,10 +118,12 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 	public void terminate() {
 		synchronized (loopLock) {
 			if(!terminated) {
+				logger.info("Connectivity engine shutting down...");
 				terminated = true;
 				running = false;
 				loopLock.notify();
 				this.callback = null;
+				this.executionThreadpool.shutdown();
 			}
 		}
 	}

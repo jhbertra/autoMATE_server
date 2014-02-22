@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{64} - %msg%n"/>
+		</Console>    
+		<RollingFile name="RollingTraceFile" fileName="logs/trace.log" filePattern="logs/trace-%d{MM-dd-yyyy}.log.gz">
+      		<ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
+      		<PatternLayout>
+        		<pattern>%d{yyyy-mm-dd, HH:mm:ss.SSS} [%t] %-5level %logger{64} - %m%n</pattern>
+      		</PatternLayout>
+      		<TimeBasedTriggeringPolicy />
+    	</RollingFile>
+		<RollingFile name="RollingFile" fileName="logs/event.log" filePattern="logs/event-%d{MM-dd-yyyy}.log.gz">
+      		<ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+      		<PatternLayout>
+        		<pattern>%d %p %c{1.} [%t] %m%n</pattern>
+      		</PatternLayout>
+      		<TimeBasedTriggeringPolicy />
+    	</RollingFile>
+    	<Async name="Async">
+    		<AppenderRef ref="Console"/>
+			<AppenderRef ref="RollingTraceFile"/>
+			<AppenderRef ref="RollingFile"/>
+		</Async>
+	</Appenders>
+	<Loggers>
+		<Root level="TRACE">
+			<AppenderRef ref="Async"/>
+		</Root>
+	</Loggers>
+</Configuration>

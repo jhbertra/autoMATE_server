@@ -7,6 +7,8 @@ import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import com.automate.server.commandLine.CommandLineInput;
@@ -29,6 +31,9 @@ public class ServerMain {
 	 * 
 	 */
 	public static void main(String[] args) {
+		System.setProperty("log4j.configurationFile", "config/log4j2.xml");
+		Logger logger = LogManager.getLogger();
+		logger.info("==> AUTOMATE SERVER START\n");
 		if(args.length < 1) {
 			showUsage();
 		} else if(args[0].equalsIgnoreCase("-p")) {
@@ -36,12 +41,13 @@ public class ServerMain {
 				showUsage();
 			} else {
 				try {
-					startServerFromPropertiesFile(args[1]);
+					logger.info("Starting server with properties file {}", args[1]);
+					startServerFromPropertiesFile(args[1], logger);
 				} catch (FileNotFoundException e) {
-					System.out.println("Error: properties file " + args[1] + " could not be found.");
+					logger.error("Failed to start server - file not found.", e);
 					System.exit(2);
 				} catch (IOException e) {
-					System.out.println("Error: error reading properties file " + args[1]);
+					logger.error("Failed to start server.", e);
 					System.exit(3);
 				}
 			}
@@ -50,18 +56,20 @@ public class ServerMain {
 		} else {
 			
 		}
+		logger.info("<== AUTOMATE SERVER END\n\n\n");
 	}
 
-	private static void startServerFromPropertiesFile(String propertiesFile) throws FileNotFoundException, IOException {
+	private static void startServerFromPropertiesFile(String propertiesFile, Logger logger) throws FileNotFoundException, IOException {
 		AutomateServer server = new AutomateServer();
 		Properties serverProperties = new Properties();
+		logger.trace("Loading properties file.");
 		serverProperties.load(new FileInputStream(propertiesFile));
 		// start the server
 		server.setProperties(serverProperties);
 		try {
 			server.initSubsystems();
-		} catch (InitializationException e1) {
-			e1.printStackTrace();
+		} catch (Exception e) {
+			logger.error("Failed to initialize server.", e);
 			return;
 		}
 		server.start();

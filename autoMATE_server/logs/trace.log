@@ -1,152 +1,21 @@
-2014-09-21, 23:09:27.534 [main] INFO  com.automate.server.ServerMain - ==> AUTOMATE SERVER START
+2014-13-22, 01:13:58.720 [main] INFO  com.automate.server.ServerMain - ==> AUTOMATE SERVER START
 
-2014-09-21, 23:09:27.541 [main] INFO  com.automate.server.ServerMain - Starting server with properties file config/config.properties
-2014-09-21, 23:09:27.546 [main] TRACE com.automate.server.ServerMain - Loading properties file.
-2014-09-21, 23:09:27.547 [main] TRACE com.automate.server.AutomateServer - Database username: root
-2014-09-21, 23:09:27.548 [main] TRACE com.automate.server.AutomateServer - Database password: quinoa
-2014-09-21, 23:09:27.548 [main] TRACE com.automate.server.AutomateServer - Database dbms: mysql
-2014-09-21, 23:09:27.548 [main] TRACE com.automate.server.AutomateServer - Database server: localhost
-2014-09-21, 23:09:27.549 [main] TRACE com.automate.server.AutomateServer - Database port: 3306
-2014-09-21, 23:09:27.550 [main] TRACE com.automate.server.AutomateServer - Protocol version: 1.0
-2014-09-21, 23:09:27.556 [main] TRACE com.automate.server.AutomateServer - Connectivity engine timeout: 15 seconds
-2014-09-21, 23:09:27.557 [main] TRACE com.automate.server.AutomateServer - Connectivity engine ping interval: 30 seconds
-2014-09-21, 23:09:27.566 [main] ERROR com.automate.server.ServerMain - Failed to initialize server.
-com.automate.server.InitializationException: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:289) ~[bin/:?]
-	at com.automate.server.AutomateServer.initSubsystems(AutomateServer.java:267) ~[bin/:?]
-	at com.automate.server.ServerMain.startServerFromPropertiesFile(ServerMain.java:70) [bin/:?]
-	at com.automate.server.ServerMain.main(ServerMain.java:45) [bin/:?]
-Caused by: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at com.automate.server.database.DbmsConnection.createConnection(DbmsConnection.java:132) ~[bin/:?]
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:287) ~[bin/:?]
-	... 3 more
-2014-09-21, 23:09:27.579 [main] INFO  com.automate.server.ServerMain - <== AUTOMATE SERVER END
-
-
-
-2014-10-21, 23:10:03.501 [main] INFO  com.automate.server.ServerMain - ==> AUTOMATE SERVER START
-
-2014-10-21, 23:10:03.508 [main] INFO  com.automate.server.ServerMain - Starting server with properties file config/config.properties
-2014-10-21, 23:10:03.513 [main] TRACE com.automate.server.ServerMain - Loading properties file.
-2014-10-21, 23:10:03.514 [main] TRACE com.automate.server.AutomateServer - Database username: root
-2014-10-21, 23:10:03.515 [main] TRACE com.automate.server.AutomateServer - Database password: quinoa
-2014-10-21, 23:10:03.515 [main] TRACE com.automate.server.AutomateServer - Database dbms: mysql
-2014-10-21, 23:10:03.515 [main] TRACE com.automate.server.AutomateServer - Database server: localhost
-2014-10-21, 23:10:03.516 [main] TRACE com.automate.server.AutomateServer - Database port: 3306
-2014-10-21, 23:10:03.517 [main] TRACE com.automate.server.AutomateServer - Protocol version: 1.0
-2014-10-21, 23:10:03.523 [main] TRACE com.automate.server.AutomateServer - Connectivity engine timeout: 15 seconds
-2014-10-21, 23:10:03.524 [main] TRACE com.automate.server.AutomateServer - Connectivity engine ping interval: 30 seconds
-2014-10-21, 23:10:03.533 [main] ERROR com.automate.server.ServerMain - Failed to initialize server.
-com.automate.server.InitializationException: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:289) ~[bin/:?]
-	at com.automate.server.AutomateServer.initSubsystems(AutomateServer.java:267) ~[bin/:?]
-	at com.automate.server.ServerMain.startServerFromPropertiesFile(ServerMain.java:70) [bin/:?]
-	at com.automate.server.ServerMain.main(ServerMain.java:45) [bin/:?]
-Caused by: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at com.automate.server.database.DbmsConnection.createConnection(DbmsConnection.java:132) ~[bin/:?]
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:287) ~[bin/:?]
-	... 3 more
-2014-10-21, 23:10:03.545 [main] INFO  com.automate.server.ServerMain - <== AUTOMATE SERVER END
-
-
-
-2014-11-21, 23:11:21.583 [main] INFO  com.automate.server.ServerMain - ==> AUTOMATE SERVER START
-
-2014-11-21, 23:11:21.591 [main] INFO  com.automate.server.ServerMain - Starting server with properties file config/config.properties
-2014-11-21, 23:11:21.598 [main] TRACE com.automate.server.ServerMain - Loading properties file.
-2014-11-21, 23:11:21.600 [main] ERROR com.automate.server.ServerMain - Failed to initialize server.
-java.lang.IllegalStateException: Must set server properties before initializing!
-	at com.automate.server.AutomateServer.initSubsystems(AutomateServer.java:262) ~[bin/:?]
-	at com.automate.server.ServerMain.startServerFromPropertiesFile(ServerMain.java:70) [bin/:?]
-	at com.automate.server.ServerMain.main(ServerMain.java:45) [bin/:?]
-2014-11-21, 23:11:21.606 [main] INFO  com.automate.server.ServerMain - <== AUTOMATE SERVER END
-
-
-
-2014-14-21, 23:14:43.288 [main] INFO  com.automate.server.ServerMain - ==> AUTOMATE SERVER START
-
-2014-14-21, 23:14:43.295 [main] INFO  com.automate.server.ServerMain - Starting server with properties file config/config.properties
-2014-14-21, 23:14:43.300 [main] TRACE com.automate.server.ServerMain - Loading properties file.
-2014-14-21, 23:14:43.301 [main] TRACE com.automate.server.AutomateServer - Initialization started.
-2014-14-21, 23:14:43.302 [main] TRACE com.automate.server.AutomateServer - Database username: root
-2014-14-21, 23:14:43.302 [main] TRACE com.automate.server.AutomateServer - Database password: quinoa
-2014-14-21, 23:14:43.302 [main] TRACE com.automate.server.AutomateServer - Database dbms: mysql
-2014-14-21, 23:14:43.303 [main] TRACE com.automate.server.AutomateServer - Database server: localhost
-2014-14-21, 23:14:43.303 [main] TRACE com.automate.server.AutomateServer - Database port: 3306
-2014-14-21, 23:14:43.304 [main] TRACE com.automate.server.AutomateServer - Protocol version: 1.0
-2014-14-21, 23:14:43.311 [main] TRACE com.automate.server.AutomateServer - Connectivity engine timeout: 15 seconds
-2014-14-21, 23:14:43.311 [main] TRACE com.automate.server.AutomateServer - Connectivity engine ping interval: 30 seconds
-2014-14-21, 23:14:43.314 [main] INFO  com.automate.server.AutomateServer - Attempting to connect to dbms...
-2014-14-21, 23:14:43.321 [main] TRACE com.automate.server.AutomateServer - Initialization ended.
-2014-14-21, 23:14:43.322 [main] ERROR com.automate.server.ServerMain - Failed to initialize server.
-com.automate.server.InitializationException: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:301) ~[bin/:?]
-	at com.automate.server.AutomateServer.initSubsystems(AutomateServer.java:271) ~[bin/:?]
-	at com.automate.server.ServerMain.startServerFromPropertiesFile(ServerMain.java:70) [bin/:?]
-	at com.automate.server.ServerMain.main(ServerMain.java:45) [bin/:?]
-Caused by: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at com.automate.server.database.DbmsConnection.createConnection(DbmsConnection.java:132) ~[bin/:?]
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:299) ~[bin/:?]
-	... 3 more
-2014-14-21, 23:14:43.335 [main] INFO  com.automate.server.ServerMain - <== AUTOMATE SERVER END
-
-
-
-2014-18-21, 23:18:19.369 [main] INFO  com.automate.server.ServerMain - ==> AUTOMATE SERVER START
-
-2014-18-21, 23:18:19.377 [main] INFO  com.automate.server.ServerMain - Starting server with properties file config/config.properties
-2014-18-21, 23:18:19.385 [main] TRACE com.automate.server.ServerMain - Loading properties file.
-2014-18-21, 23:18:19.386 [main] TRACE com.automate.server.AutomateServer - Initialization started.
-2014-18-21, 23:18:19.386 [main] TRACE com.automate.server.AutomateServer - Database username: root
-2014-18-21, 23:18:19.387 [main] TRACE com.automate.server.AutomateServer - Database password: quinoa
-2014-18-21, 23:18:19.387 [main] TRACE com.automate.server.AutomateServer - Database dbms: mysql
-2014-18-21, 23:18:19.388 [main] TRACE com.automate.server.AutomateServer - Database server: localhost
-2014-18-21, 23:18:19.388 [main] TRACE com.automate.server.AutomateServer - Database port: 3306
-2014-18-21, 23:18:19.390 [main] TRACE com.automate.server.AutomateServer - Protocol version: 1.0
-2014-18-21, 23:18:19.398 [main] TRACE com.automate.server.AutomateServer - Connectivity engine timeout: 15 seconds
-2014-18-21, 23:18:19.398 [main] TRACE com.automate.server.AutomateServer - Connectivity engine ping interval: 30 seconds
-2014-18-21, 23:18:19.402 [main] INFO  com.automate.server.AutomateServer - Attempting to connect to dbms...
-2014-18-21, 23:18:19.410 [main] TRACE com.automate.server.AutomateServer - Initialization aborted.
-2014-18-21, 23:18:19.411 [main] ERROR com.automate.server.ServerMain - Failed to initialize server.
-com.automate.server.InitializationException: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:302) ~[bin/:?]
-	at com.automate.server.AutomateServer.initSubsystems(AutomateServer.java:271) ~[bin/:?]
-	at com.automate.server.ServerMain.startServerFromPropertiesFile(ServerMain.java:70) [bin/:?]
-	at com.automate.server.ServerMain.main(ServerMain.java:45) [bin/:?]
-Caused by: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at java.sql.DriverManager.getConnection(Unknown Source) ~[?:1.6.0_34]
-	at com.automate.server.database.DbmsConnection.createConnection(DbmsConnection.java:132) ~[bin/:?]
-	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:300) ~[bin/:?]
-	... 3 more
-2014-18-21, 23:18:19.427 [main] INFO  com.automate.server.ServerMain - <== AUTOMATE SERVER END
-
-
-
-2014-32-21, 23:32:09.807 [main] INFO  com.automate.server.ServerMain - ==> AUTOMATE SERVER START
-
-2014-32-21, 23:32:09.811 [main] INFO  com.automate.server.ServerMain - Starting server with properties file config/config.properties
-2014-32-21, 23:32:09.815 [main] TRACE com.automate.server.ServerMain - Loading properties file.
-2014-32-21, 23:32:09.816 [main] TRACE com.automate.server.AutomateServer - Initialization started.
-2014-32-21, 23:32:09.816 [main] TRACE com.automate.server.AutomateServer - Database username: root
-2014-32-21, 23:32:09.816 [main] TRACE com.automate.server.AutomateServer - Database password: quinoa
-2014-32-21, 23:32:09.816 [main] TRACE com.automate.server.AutomateServer - Database dbms: mysql
-2014-32-21, 23:32:09.816 [main] TRACE com.automate.server.AutomateServer - Database server: localhost
-2014-32-21, 23:32:09.816 [main] TRACE com.automate.server.AutomateServer - Database port: 3306
-2014-32-21, 23:32:09.817 [main] TRACE com.automate.server.AutomateServer - Protocol version: 1.0
-2014-32-21, 23:32:09.823 [main] TRACE com.automate.server.AutomateServer - Connectivity engine timeout: 15 seconds
-2014-32-21, 23:32:09.823 [main] TRACE com.automate.server.AutomateServer - Connectivity engine ping interval: 30 seconds
-2014-32-21, 23:32:09.825 [main] TRACE com.automate.server.AutomateServer - Configuring message sub parsers.
-2014-32-21, 23:32:09.825 [main] TRACE com.automate.server.AutomateServer - Configuring message handlers.
-2014-32-21, 23:32:09.825 [main] INFO  com.automate.server.AutomateServer - Attempting to connect to dbms...
-2014-32-21, 23:32:09.831 [main] TRACE com.automate.server.AutomateServer - Initialization aborted.
-2014-32-21, 23:32:09.831 [main] ERROR com.automate.server.ServerMain - Failed to initialize server.
+2014-13-22, 01:13:58.724 [main] INFO  com.automate.server.ServerMain - Starting server with properties file config/config.properties
+2014-13-22, 01:13:58.728 [main] TRACE com.automate.server.ServerMain - Loading properties file.
+2014-13-22, 01:13:58.729 [main] TRACE com.automate.server.AutomateServer - Initialization started.
+2014-13-22, 01:13:58.729 [main] TRACE com.automate.server.AutomateServer - Database username: root
+2014-13-22, 01:13:58.729 [main] TRACE com.automate.server.AutomateServer - Database password: quinoa
+2014-13-22, 01:13:58.729 [main] TRACE com.automate.server.AutomateServer - Database dbms: mysql
+2014-13-22, 01:13:58.729 [main] TRACE com.automate.server.AutomateServer - Database server: localhost
+2014-13-22, 01:13:58.729 [main] TRACE com.automate.server.AutomateServer - Database port: 3306
+2014-13-22, 01:13:58.730 [main] TRACE com.automate.server.AutomateServer - Protocol version: 1.0
+2014-13-22, 01:13:58.737 [main] TRACE com.automate.server.AutomateServer - Connectivity engine timeout: 15 seconds
+2014-13-22, 01:13:58.737 [main] TRACE com.automate.server.AutomateServer - Connectivity engine ping interval: 30 seconds
+2014-13-22, 01:13:58.740 [main] TRACE com.automate.server.AutomateServer - Configuring message sub parsers.
+2014-13-22, 01:13:58.740 [main] TRACE com.automate.server.AutomateServer - Configuring message handlers.
+2014-13-22, 01:13:58.740 [main] INFO  com.automate.server.AutomateServer - Attempting to connect to dbms...
+2014-13-22, 01:13:58.745 [main] TRACE com.automate.server.AutomateServer - Initialization aborted.
+2014-13-22, 01:13:58.745 [main] ERROR com.automate.server.ServerMain - Failed to initialize server.
 com.automate.server.InitializationException: java.sql.SQLException: No suitable driver found for jdbc:mysql://localhost:3306/
 	at com.automate.server.AutomateServer.connectToDbms(AutomateServer.java:302) ~[bin/:?]
 	at com.automate.server.AutomateServer.initSubsystems(AutomateServer.java:271) ~[bin/:?]

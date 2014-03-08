@@ -14,7 +14,7 @@ public class MessageManagerParameters {
 
 	public final int numReceiveThreads;
 	public final int numSendThreads;
-	public final HashMap<String, MessageSubParser<Message<ClientProtocolParameters>, ClientProtocolParameters>> subParsers;
+	public final HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>> subParsers;
 	public final ISecurityManager securityManager;
 	public final IConnectivityManager connectivityManager;
 	public final HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers;
@@ -24,7 +24,7 @@ public class MessageManagerParameters {
 	public MessageManagerParameters(
 			int numReceiveThreads,
 			int numSendThreads,
-			HashMap<String, MessageSubParser<Message<ClientProtocolParameters>, ClientProtocolParameters>> subParsers,
+			HashMap<String,MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>> subParsers,
 			ISecurityManager securityManager,
 			IConnectivityManager connectivityManager,
 			HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers,

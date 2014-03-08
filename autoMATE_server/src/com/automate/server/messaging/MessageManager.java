@@ -1,21 +1,16 @@
 package com.automate.server.messaging;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.xml.sax.SAXException;
 
 import com.automate.protocol.IIncomingMessageParser;
 import com.automate.protocol.Message;
 import com.automate.protocol.Message.MessageType;
-import com.automate.protocol.MessageFormatException;
 import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.protocol.client.messages.ClientCommandMessage;
 import com.automate.protocol.client.messages.ClientStatusUpdateMessage;
@@ -26,7 +21,6 @@ import com.automate.server.messaging.handlers.AuthenticationMessageHandlerParams
 import com.automate.server.messaging.handlers.ClientToNodeMessageHandlerParams;
 import com.automate.server.messaging.handlers.IMessageHandler;
 import com.automate.server.security.ISecurityManager;
-import com.automate.util.xml.XmlFormatException;
 
 public class MessageManager implements IMessageManager {
 

@@ -15,6 +15,7 @@ import com.automate.protocol.Message;
 import com.automate.protocol.Message.MessageType;
 import com.automate.protocol.MessageSubParser;
 import com.automate.protocol.client.ClientProtocolParameters;
+import com.automate.protocol.client.subParsers.ClientAuthenticationMessageSubParser;
 import com.automate.server.connectivity.ConnectivityWatchdogThread;
 import com.automate.server.connectivity.ConnectivityWatchdogThread.OnClientTimeoutListener;
 import com.automate.server.connectivity.EngineCallback;
@@ -303,10 +304,11 @@ public class AutomateServer {
 		}
 	}
 
-	private HashMap<String, MessageSubParser<Message<ClientProtocolParameters>, ClientProtocolParameters>> getMessageSubParsers() {
+	private HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>, ClientProtocolParameters>> getMessageSubParsers() {
 		logger.trace("Configuring message sub parsers.");
-		HashMap<String, MessageSubParser<Message<ClientProtocolParameters>,ClientProtocolParameters>> subParsers = 
-				new HashMap<String, MessageSubParser<Message<ClientProtocolParameters>,ClientProtocolParameters>>();
+		HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>> subParsers = 
+				new HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>>();
+		subParsers.put(MessageType.AUTHENTICATION.toString(), new ClientAuthenticationMessageSubParser());
 		return subParsers;
 	}
 

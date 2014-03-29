@@ -38,9 +38,6 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 		if(timeout >= pingIntervalSeconds) {
 			throw new IllegalArgumentException("Timeout must be smaller than ping interval");
 		}
-		if(callback == null) {
-			throw new NullPointerException("ConnectivityEngine callback was null.");
-		}
 		if(executionThreadpool == null) {
 			throw new NullPointerException("ConnectivityEngine executionThreadpool was null.");
 		}
@@ -95,7 +92,7 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 				watchdogThread.setTimeout(id, timeout);
 			}
 		}, messageManager);
-		logger.trace("Pinged {} clients.", pingedClients);
+		System.out.println("Pinged " + pingedClients + " clients.");
 	}
 
 	/**
@@ -133,6 +130,13 @@ public class ConnectivityEngine implements OnClientTimeoutListener, IConnectivit
 	 */
 	public EngineCallback getCallback() {
 		return callback;
+	}
+
+	/**
+	 * @param callback the callback to set
+	 */
+	public void setCallback(EngineCallback callback) {
+		this.callback = callback;
 	}
 
 	@Override

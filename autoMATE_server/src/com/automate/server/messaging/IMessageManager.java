@@ -1,6 +1,7 @@
 package com.automate.server.messaging;
 
 import java.io.BufferedReader;
+import java.net.Socket;
 
 import com.automate.protocol.Message;
 import com.automate.protocol.server.ServerProtocolParameters;
@@ -31,11 +32,13 @@ public interface IMessageManager extends IManager {
 	 * @param reader the reader from which to read the input.
 	 * @param hostAddress the address of the host that sent the message.
 	 */
-	public void handleInput(BufferedReader reader, String hostAddress);
+	public void handleInput(BufferedReader reader, Socket socket);
 	
 	public interface MessageSentListener {
 		
 		public void messageSent();
+
+		void messageDeliveryFailed(Message<ServerProtocolParameters> message);
 		
 	}
 	

@@ -12,6 +12,7 @@ public class DbmsConnection {
 	private String dbms;
 	private String serverName;
 	private String portNumber;
+	private String database;
 
 	/**
 	 * Creates a new {@link DbmsConnection}
@@ -21,12 +22,13 @@ public class DbmsConnection {
 	 * @param serverName the web address of the server
 	 * @param portNumber the dbms port number
 	 */
-	public DbmsConnection(String username, String password, String dbms, String serverName, String portNumber) {
+	public DbmsConnection(String username, String password, String dbms, String serverName, String portNumber, String database) {
 		this.password = password;
 		this.username = username;
 		this.dbms = dbms;
 		this.serverName = serverName;
 		this.portNumber = portNumber;
+		this.database = database;
 	}
 
 	
@@ -120,16 +122,32 @@ public class DbmsConnection {
 	}
 
 
+	
+	/**
+	 * @return the database
+	 */
+	public String getDatabase() {
+		return database;
+	}
+
+
+
+	/**
+	 * @param database the database to set
+	 */
+	public void setDatabase(String database) {
+		this.database = database;
+	}
+
+
+
 	/**
 	 * Attempts to establish a connection to the dbms described by this object.
 	 * @return a {@link Connection} to the dbms
 	 * @throws SQLException if an error occurs while connecting.
 	 */
 	public Connection createConnection() throws SQLException {
-		Properties connectionProperties = new Properties();
-		connectionProperties.put("username", username);
-		connectionProperties.put("password", password);
-		return DriverManager.getConnection("jdbc:" + dbms + "://" + serverName + ":" + portNumber + "/", connectionProperties);
+		return DriverManager.getConnection("jdbc:" + dbms + "://" + serverName + ":" + portNumber + "/" + database , username, password);
 	}
 
 }

@@ -3,6 +3,7 @@ package com.automate.server;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,6 +32,11 @@ public class ServerMain {
 	 * 
 	 */
 	public static void main(String[] args) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		System.setProperty("log4j.configurationFile", "../config/log4j2.xml");
 		Logger logger = LogManager.getLogger();
 		logger.info("==> AUTOMATE SERVER START\n");
@@ -72,7 +78,12 @@ public class ServerMain {
 			logger.error("Failed to initialize server.", e);
 			return;
 		}
-		server.start();
+		try {
+			server.start();
+		} catch (RuntimeException e) {
+			server.shutdown();
+			throw e;
+		}
 
 		// start the command line input
 		try {
@@ -89,7 +100,11 @@ public class ServerMain {
 			e.printStackTrace();
 		}
 
-		server.shutdown();	
+		while(true) {
+			//spin until termination
+		}
+		
+		//server.shutdown();	
 	}
 
 	private static void startServerGui() {

@@ -1,5 +1,7 @@
 package com.automate.server.security;
 
+import java.net.Socket;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,21 +63,21 @@ public class SecurityManagerImpl implements ISecurityManager {
 	}
 
 	@Override
-	public String authenticateClient(String username, String password, String sessionKey, String ipAddress) {
+	public String authenticateClient(String username, String password, String sessionKey, Socket socekt) {
 		if(username == null) {
 			throw new NullPointerException("username was null.");
 		} else if(password == null) {
 			throw new NullPointerException("password was null.");
-		} else if(ipAddress == null) {
-			throw new NullPointerException("ipAddress was null.");
+		} else if(socekt == null) {
+			throw new NullPointerException("socket was null.");
 		}
 		try {
 			User user = dbManager.getUserByUsername(username);
 			if(user == null) {
 				return null;
 			}
-			if((sessionKey == null || sessionKey.isEmpty()) && user.password.equals(password)) {			
-				return sessionManager.createNewAppSession(username, ipAddress);
+			if((sessionKey == null || sessionKey.isEmpty() || sessionKey.equalsIgnoreCase("null")) && user.password.equals(password)) {
+				return sessionManager.createNewAppSession(username, socekt);
 			}
 		} catch(Exception e) {
 			logger.error("Error authenticating client" + username + ".", e);
@@ -92,11 +94,11 @@ public class SecurityManagerImpl implements ISecurityManager {
 	}
 
 	@Override
-	public String getIpAddress(String sessionKey) {
+	public Socket getSocket(String sessionKey) {
 		if(sessionKey == null) {
 			throw new NullPointerException("sessionKey was null in getIpAddress");
 		}
-		return sessionManager.getIpAddressForSessionKey(sessionKey);
+		return sessionManager.borrowSocketForSessionKey(sessionKey);
 	}
 
 	@Override
@@ -137,4 +139,14 @@ public class SecurityManagerImpl implements ISecurityManager {
 		return sessionManager.getNodeIdForSessionKey(sessionKey);
 	}
 
+	@Override
+	public void returnSocket(String sessionKey) {
+		sessionManager.returnSocket(sessionKey);
+	}
+
+	@Override
+	public void updateSocket(String sessionKey, Socket socket) {
+		sessionManager.updateClientSocket(sessionKey, socket);
+	}
+	
 }

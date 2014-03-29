@@ -1,30 +1,37 @@
-<project name="autoMATE Server" default="clean-dist">
-	<property name="src" location="src"/>
-	<property name="build" location="build"/>
-	<property name="dist" location="dist"/>
-	<property name="app.name" value="autoMATE_server" />
+<project name="server" default="dist">
+	<property name="app.name" value="autoMATE-server" />
 	
 	<path id="classpath">
 		<fileset dir="lib/">
 		    <include name="*.jar"/>
 		</fileset>
+		<fileset dir="../../autoMATE_protocol/autoMATE_protocol/dist">
+		    <include name="*.jar"/>
+		</fileset>
 	</path>
 	
-	<target name="init">
-		<mkdir dir="${build}"/>
+	<target name="publish" description="Calls a script that builds and doploys the jar." >
+		<exec dir="${basedir}" executable="cmd">
+			<arg line="/c dist-deploy.bat" />
+		</exec>
 	</target>
 	
-	<target name="build" depends="init" description="Compiles the source code into class files." >
-		<javac srcdir="${src}" destdir="${build}">
-			<classpath refid="classpath"/>
-		</javac>
+	<target name="deploy">
+		<scp todir="jamie:quinoa@70.72.42.197:automate/autoMATE/server/" trust="true" port="22" file="dist/autoMATE-server.jar"/>
 	</target>
 	
-	<target name="dist" depends="build" description="Packs the compiled program into a jar file.">
+	<target name="dist" depends="clean, build">
 		<mkdir dir="${dist}"/>
+		<mkdir dir="${build}/com/automate/protocol"/>
+		<copy todir="${build}/com/automate/protocol">
+			<fileset dir="../../autoMATE_protocol/autoMATE_protocol/build/com/automate/protocol" />
+		</copy>
+		<copy todir="${build}/com/automate/util">
+			<fileset dir="../../autoMATE_protocol/autoMATE_protocol/build/com/automate/util" />
+		</copy>
 		<jar jarfile="${dist}/${app.name}.jar" basedir="${build}">
 		    <restrict>
-		    	<name name="**/*.class"/>
+		    	<name name="**/*.*"/>
 		    	<archives>
 		    		<zips>
 		        		<fileset dir="lib/" includes="*.jar"/>
@@ -37,11 +44,6 @@
 		</jar>
 	</target>
 	
-	<target name="clean" description="Cleans the build and dist directories.">
-		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
-	</target>
-	
-	<target name="clean-dist" depends="clean, dist" description="cleans and builds the jar."/>
-	
+	<import file="build-common.xml"/>
+		
 </project>

@@ -1,5 +1,7 @@
 package com.automate.server.connectivity;
 
+import java.net.Socket;
+
 import com.automate.server.messaging.IMessageManager;
 
 /**

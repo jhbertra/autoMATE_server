@@ -1,7 +1,11 @@
 package com.automate.server.security;
 
 
+import java.net.Socket;
+
+import com.automate.protocol.Message;
 import com.automate.protocol.client.ClientProtocolParameters;
+import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.server.IManager;
 
 /**
@@ -23,12 +27,13 @@ public interface ISecurityManager extends IManager {
 	 * @param username - the user's username
 	 * @param password - the user's password
 	 * @param sessionKey - the session key of the message that arrived with the user's credentails
+	 * @param socket - the socket connected to the client.
 	 * @return the new session key, null if authentication failed.
 	 * @throws NullPointerException if username is null
 	 * @throws NullPointerException if password is null
 	 * @throws NullPointerException if ipAddress is null
 	 */
-	public String authenticateClient(String username, String password, String sessionKey, String ipAddress);
+	public String authenticateClient(String username, String password, String sessionKey, Socket socket);
 
 	/**
 	 * Returns the username of the account associated with a given session key.
@@ -47,10 +52,10 @@ public interface ISecurityManager extends IManager {
 	public long getNodeId(String sessionKey);
 
 	/**
-	 * Returns the ip address for the given session.
+	 * Returns the socket for the given session.
 	 * @param sessionKey the session key
 	 */
-	public String getIpAddress(String sessionKey);
+	Socket getSocket(String sessionKey);
 	
 	/**
 	 * Returns the session key owned by the node with uid <code>sessionKey</code>
@@ -75,6 +80,11 @@ public interface ISecurityManager extends IManager {
 	 * @return session-valid
 	 */
 	public boolean validateParameters(ClientProtocolParameters parameters);
+
+	public void returnSocket(String sessionKey);
+
+	void updateSocket(String sessionKey, Socket socket);
+
 
 	
 }

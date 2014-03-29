@@ -1,11 +1,13 @@
 package com.automate.server.messaging.handlers;
 
+import java.net.Socket;
+
 public class AuthenticationMessageHandlerParams {
 
-	final String clientIpAddress;
+	public Socket clientSocket;
 
-	public AuthenticationMessageHandlerParams(String clientIpAddress) {
-		this.clientIpAddress = clientIpAddress;
+	public AuthenticationMessageHandlerParams(Socket clientSocket) {
+		this.clientSocket = clientSocket;
 	}
 	
 }

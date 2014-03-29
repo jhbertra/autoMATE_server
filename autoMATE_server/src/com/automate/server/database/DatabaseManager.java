@@ -43,8 +43,8 @@ public class DatabaseManager implements IDatabaseManager {
 		Statement stmt = null;
 		String sqlQuery = 
 					"SELECT * "
-				+ 	"FROM node "
-				+ 	"WHERE user_id = (SELECT uid FROM user WHERE username = \"" + username + "\")";
+				+ 	"FROM NODE "
+				+ 	"WHERE user_id = (SELECT uid FROM USER WHERE username = \"" + username + "\")";
 		
 		try{
 			stmt = connection.createStatement();
@@ -59,6 +59,7 @@ public class DatabaseManager implements IDatabaseManager {
 				Node rtNode = new Node(nId,name,usrID,modelId,maxVersion);
 				rtNodeList.add(rtNode);
 			}
+			System.out.println(rtNodeList.size() + " nodes returned.");
 			return rtNodeList;
 		}
 		catch(SQLException e){
@@ -74,10 +75,11 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid manufacturer id " +  manufacturerId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "SELECT * FROM manufacturer WHERE uid = " + manufacturerId; 
+		String sqlQuery = "SELECT * FROM MANUFACTURER WHERE uid = " + manufacturerId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
+			if(!rtSet.next()) return null;
 			long uId = rtSet.getLong("uid");
 			String mnfrName = rtSet.getString("name");
 			String informationUrl = rtSet.getString("information_url");
@@ -97,10 +99,11 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid model id " +  modelId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "SELECT * FROM model WHERE uid = " + modelId; 
+		String sqlQuery = "SELECT * FROM MODEL WHERE uid = " + modelId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
+			if(!rtSet.next()) return null;
 			long uId = rtSet.getLong("uid");
 			long mnfrId = rtSet.getLong("mnfr_id");
 			String informationUrl = rtSet.getString("information_url");
@@ -121,10 +124,11 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid node id " +  nodeId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "SELECT * FROM node WHERE uid = " + nodeId; 
+		String sqlQuery = "SELECT * FROM NODE WHERE uid = " + nodeId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
+			if(!rtSet.next()) return null;
 			long nId = rtSet.getLong("uid");
 			String name = rtSet.getString("name");
 			long userId = rtSet.getLong("user_id");
@@ -145,10 +149,11 @@ public class DatabaseManager implements IDatabaseManager {
 			throw new IllegalArgumentException("Invalid user id " +  userId);
 		}
 		Statement stmt = null;
-		String sqlQuery = "SELECT * FROM users WHERE uid = " + userId; 
+		String sqlQuery = "SELECT * FROM USER WHERE uid = " + userId; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
+			if(!rtSet.next()) return null;
 			long uid = rtSet.getLong("uid");
 			String userName = rtSet.getString("username");
 			String firstName = rtSet.getString("first_name");
@@ -172,10 +177,11 @@ public class DatabaseManager implements IDatabaseManager {
 		}
 		
 		Statement stmt = null;
-		String sqlQuery = "SELECT * FROM users WHERE username = \"" + username + "\""; 
+		String sqlQuery = "SELECT * FROM USER WHERE username = \"" + username + "\""; 
 		try{
 			stmt = connection.createStatement();
 			ResultSet rtSet = stmt.executeQuery(sqlQuery);
+			if(!rtSet.next()) return null;
 			long uid = rtSet.getLong("uid");
 			String userName = rtSet.getString("username");
 			String firstName = rtSet.getString("first_name");

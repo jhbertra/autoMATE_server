@@ -1,0 +1,14 @@
+<project name="dependencies" default="depend.all">
+	<target name="depend.all"
+		depends="depend.server">
+	</target>
+	
+	<target name="depend.server"
+		depends="depend.protocol">
+		<ant dir="../autoMATE_server" inheritall="false"/>
+	</target>
+	
+	<target name="depend.protocol">
+		<ant dir="../../autoMATE_protocol/autoMATE_protocol" inheritall="false"/>
+	</target>
+</project>

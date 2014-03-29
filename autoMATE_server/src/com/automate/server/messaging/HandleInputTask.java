@@ -1,6 +1,6 @@
 package com.automate.server.messaging;
 
-import java.io.BufferedReader;
+import java.io.BufferedReader; 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -20,7 +20,7 @@ public class HandleInputTask implements Runnable {
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			manager.handleInput(reader, socket.getInetAddress().getHostAddress());
+			manager.handleInput(reader, socket);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,6 +1,9 @@
 package com.automate.server.messaging;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
@@ -26,21 +29,21 @@ public class MessageManager implements IMessageManager {
 
 	private ISecurityManager securityManager;
 	private IConnectivityManager connectivityManager;
-	
+
 	private IPacketReceiveThread receiveThread;
 	private ExecutorService packetSendThreadpool;
-	
+
 	private IIncomingMessageParser<ClientProtocolParameters> parser;
-	
+
 	private ISocket.Factory socketFactory;
-	
+
 	private HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers;
 	private int minorVersion;
 	private int majorVersion;
 	private boolean terminated;
 
 	private static final Logger logger = LogManager.getLogger();
-	
+
 	public MessageManager(
 			ISecurityManager securityManager,
 			IConnectivityManager connectivityManager,
@@ -94,35 +97,44 @@ public class MessageManager implements IMessageManager {
 		if(message == null) {
 			throw new NullPointerException("message was null.");
 		}
-		final String address = securityManager.getIpAddress(message.getParameters().sessionKey);
-		if(address == null || address.isEmpty()) {
+		final Socket socket = securityManager.getSocket(message.getParameters().sessionKey);
+		if(socket == null) {
+			System.out.println("No socket");
 			return;
 		}
+		sendMessage(message, listener, socket);
+		securityManager.returnSocket(message.getParameters().sessionKey);
+	}
+
+	private void sendMessage(final Message<ServerProtocolParameters> message, final MessageSentListener listener, Socket socket) {
+		System.out.println("Address: " + socket.getInetAddress().getHostAddress());
 		logger.info("Sending {} message to {}.", message.getMessageType().toString(), 
 				securityManager.getUsername(message.getParameters().sessionKey));
 		try {
-			packetSendThreadpool.submit(new PacketSendTask(message, listener, this.socketFactory.newInstance(address, 6300)));
+			packetSendThreadpool.submit(new PacketSendTask(message, listener, socket));
 		} catch(RejectedExecutionException e) {
 			logger.warn("Message was not sent - manager shut down.");
 		}
 	}
 
 	@Override
-	public void handleInput(BufferedReader reader, String hostAddress) {
+	public void handleInput(BufferedReader reader, final Socket socket) {
 		if(reader == null) {
 			throw new NullPointerException("reader was null.");
 		}
-		if(hostAddress == null) {
-			throw new NullPointerException("host address was null.");
+		if(socket == null) {
+			throw new NullPointerException("socket was null.");
 		}
 		try {
-			logger.info("Receiving message.");
+			System.out.println("Receiving message.");
 			String line;
 			StringBuilder lineBuilder = new StringBuilder();
-			while((line = reader.readLine()) != null) {
+			while(!(line = reader.readLine()).equals("\0")) {
 				lineBuilder.append(line);
+				lineBuilder.append('\n');
 			}
 			String xml = lineBuilder.toString();
+			System.out.println("Message contents:\n" + xml);
 			if(xml == null) {
 				throw new NullPointerException("attempted to handle null input.");
 			} else if(xml.isEmpty()) {
@@ -134,22 +146,47 @@ public class MessageManager implements IMessageManager {
 			}
 			logger.info("Received {} message from {}.", message.getMessageType().toString(), 
 					securityManager.getUsername(message.getParameters().sessionKey));
-			logger.trace("Message contents:\n{}", xml);
 			IMessageHandler handler = handlers.get(message.getMessageType());
+			if(handler == null) {
+				throw new NullPointerException("No handler registered for message type " + message.getMessageType() + ".");
+			}
 			Message<ServerProtocolParameters> responseMessage = handler.handleMessage(majorVersion, minorVersion, 
-					securityManager.validateParameters(message.getParameters()), message, getParameters(message, hostAddress));
+					securityManager.validateParameters(message.getParameters()), message, getParameters(message, socket));
 			if(responseMessage != null) {
-				sendMessage(responseMessage);
+				if(!message.getParameters().sessionKey.isEmpty() && !message.getParameters().sessionKey.equalsIgnoreCase("null")) {					
+					securityManager.updateSocket(message.getParameters().sessionKey, socket);
+				}
+				if(!responseMessage.getParameters().sessionKey.isEmpty()) {
+					sendMessage(responseMessage);
+				} else {
+					sendMessage(responseMessage, new MessageSentListener() {
+						@Override
+						public void messageSent() {
+							PrintWriter writer;
+							try {
+								writer = new PrintWriter(socket.getOutputStream());
+								writer.println("EOF");
+								writer.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+
+						@Override
+						public void messageDeliveryFailed(Message<ServerProtocolParameters> message) {
+						}
+					}, socket);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Error handling received message.", e);
 		}
 	}
 
-	private Object getParameters(Message<ClientProtocolParameters> message, String ipAddress) {
+	private Object getParameters(Message<ClientProtocolParameters> message, Socket socket) {
 		switch (message.getMessageType()) {
 		case AUTHENTICATION:
-			return new AuthenticationMessageHandlerParams(ipAddress);
+			return new AuthenticationMessageHandlerParams(socket);
 		case COMMAND_CLIENT:
 			long nodeId = ((ClientCommandMessage)message).nodeId;
 			return new ClientToNodeMessageHandlerParams(nodeId);

@@ -11,4 +11,6 @@ public interface IConnectivityManager extends IManager {
 
 	public void setWatchdogThread(IWatchdogThread watchdogThread);
 	
+	public void setCallback(EngineCallback callback);
+	
 }

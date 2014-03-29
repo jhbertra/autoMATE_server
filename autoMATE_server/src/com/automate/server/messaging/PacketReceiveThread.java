@@ -59,6 +59,7 @@ public class PacketReceiveThread extends Thread implements IPacketReceiveThread 
 	public void cancel() {
 		logger.info("Shutting down PacketReceiveThread.");
 		this.cancelled = true;
+		logger.info("Cancelling trhead.");
 		if(serverSocket != null && !serverSocket.isClosed()) {
 			try {
 				serverSocket.close();

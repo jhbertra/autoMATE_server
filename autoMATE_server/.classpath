@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/log4j-api-2.0-rc1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-core-2.0-rc1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/autoMATE_protocol"/>
+	<classpathentry kind="lib" path="C:/Users/jamie.bertram/git/autoMATE_server/autoMATE_server/lib/mysql-connector-java-5.1.29-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

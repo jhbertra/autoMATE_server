@@ -16,6 +16,12 @@ import com.automate.protocol.Message.MessageType;
 import com.automate.protocol.MessageSubParser;
 import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.protocol.client.subParsers.ClientAuthenticationMessageSubParser;
+import com.automate.protocol.client.subParsers.ClientCommandMessageSubParser;
+import com.automate.protocol.client.subParsers.ClientNodeListMessageSubParser;
+import com.automate.protocol.client.subParsers.ClientPingMessageSubParser;
+import com.automate.protocol.client.subParsers.ClientStatusUpdateMessageSubParser;
+import com.automate.protocol.client.subParsers.ClientWarningMessageSubParser;
+import com.automate.protocol.node.messages.NodeStatusUpdateMessage;
 import com.automate.server.connectivity.ConnectivityWatchdogThread;
 import com.automate.server.connectivity.ConnectivityWatchdogThread.OnClientTimeoutListener;
 import com.automate.server.connectivity.EngineCallback;
@@ -23,7 +29,16 @@ import com.automate.server.connectivity.IConnectivityManager;
 import com.automate.server.database.DbmsConnection;
 import com.automate.server.database.IDatabaseManager;
 import com.automate.server.messaging.IMessageManager;
+import com.automate.server.messaging.handlers.AuthenticationMessageHandler;
+import com.automate.server.messaging.handlers.ClientCommandMessageHandler;
+import com.automate.server.messaging.handlers.ClientStatusUpdateMessageHandler;
+import com.automate.server.messaging.handlers.ClientWarningMessageHandler;
 import com.automate.server.messaging.handlers.IMessageHandler;
+import com.automate.server.messaging.handlers.NodeCommandMessageHandler;
+import com.automate.server.messaging.handlers.NodeListMessageHandler;
+import com.automate.server.messaging.handlers.NodeStatusUpdateMessageHandler;
+import com.automate.server.messaging.handlers.NodeWarningMessageHandler;
+import com.automate.server.messaging.handlers.PingMessageHandler;
 import com.automate.server.security.ISecurityManager;
 import com.automate.server.security.ISessionManager;
 import com.automate.server.security.SessionManager;
@@ -95,6 +110,13 @@ public class AutomateServer {
 	 * Parameters for creating and configuring the message manager.
 	 */
 	private MessageManagerParameters messagingParams;
+	private ISessionManager sessionManager;
+	private ExecutorService connectivityExecutorService;
+	private EngineCallback connectivityCallback;
+	private int connectivityTimeout;
+	private int connectivityPingInterval;
+	private int numReceiveThreads;
+	private int numSendThreads;
 
 	private static final Logger logger = LogManager.getLogger();
 
@@ -127,9 +149,6 @@ public class AutomateServer {
 			throw new InitializationException("Property not defined: messaging.sendThreads");
 		}
 
-		int numReceiveThreads;
-		int numSendThreads;
-
 		try {
 			numReceiveThreads = Integer.parseInt(numReceiveThreadsString);
 		} catch(NumberFormatException e) {
@@ -141,9 +160,6 @@ public class AutomateServer {
 		} catch(NumberFormatException e) {
 			throw new InitializationException("Error parsing messaging properties: sendThreads malformed: messaging.sendThreads = " + numSendThreadsString);
 		}
-
-		this.messagingParams = new MessageManagerParameters(numReceiveThreads, numSendThreads, getMessageSubParsers(), securityManager, 
-				connectivityManager, getMessageHandlers(), minorVersion, majorVersion);
 	}
 
 	private void readConnectivityProperties() throws InitializationException {
@@ -157,34 +173,29 @@ public class AutomateServer {
 			throw new InitializationException("Property not defined: connectivity.heartbeat");
 		}
 
-		int timeout;
-		int pingInterval;
 
 		try {
-			timeout = Integer.parseInt(timeoutString);
+			connectivityTimeout = Integer.parseInt(timeoutString);
 		} catch(NumberFormatException e) {
 			throw new InitializationException("Error parsing connectivity properties: timeout malformed: connectivity.timeout = " + timeoutString);
 		}
 		try {
-			pingInterval = Integer.parseInt(intervalString);
+			connectivityPingInterval = Integer.parseInt(intervalString);
 		} catch(NumberFormatException e) {
 			throw new InitializationException("Error parsing connectivity properties: heartbeat malformed: connectivity.heartbeat = " + intervalString);
 		}
 
-		EngineCallback callback = (EngineCallback) this.messageManager;
-		ExecutorService executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
+		connectivityCallback = (EngineCallback) this.sessionManager;
+		connectivityExecutorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable runnable) {
 				return new Thread(runnable, "Connectivity Engine");
 			}
 		});
-
-		this.connectivityParams = new ConnectivityEngineParameters(executorService, callback, timeout, pingInterval);
 	}
 
 	private void readSecurityProperties() {
-		ISessionManager sessionManager = new SessionManager(majorVersion, minorVersion);
-		this.securityParams = new SecurityManagerParameters(sessionManager, dbManager, majorVersion, minorVersion);
+		sessionManager = new SessionManager(majorVersion, minorVersion);
 	}
 
 	private void readVersionProperties() throws InitializationException {
@@ -214,11 +225,13 @@ public class AutomateServer {
 		String dbms = properties.getProperty("database.dbms");
 		String serverName = properties.getProperty("database.server");
 		String portNumber = properties.getProperty("database.port");
+		String database = properties.getProperty("database.database");
 		logger.trace("Database username: {}", username);
 		logger.trace("Database password: {}", password);
 		logger.trace("Database dbms: {}", dbms);
 		logger.trace("Database server: {}", serverName);
 		logger.trace("Database port: {}", portNumber);
+		logger.trace("Database database: {}", database);
 		if(username == null) {
 			throw new InitializationException("Property not defined: database.username");
 		} else if(password == null) {
@@ -229,8 +242,10 @@ public class AutomateServer {
 			throw new InitializationException("Property not defined: database.server");
 		} else if(portNumber == null) {
 			throw new InitializationException("Property not defined: database.port");
+		} else if (database == null) {
+			throw new InitializationException("Property not defined: database.database");
 		}
-		this.dbmsConnection = new DbmsConnection(username, password, dbms, serverName, portNumber);
+		this.dbmsConnection = new DbmsConnection(username, password, dbms, serverName, portNumber, database);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,17 +288,24 @@ public class AutomateServer {
 			logger.trace("Creating database manager.");
 			dbManager = Managers.newDatabaseManager(connection);
 			logger.trace("Creating security manager.");
+			securityParams = new SecurityManagerParameters(sessionManager, dbManager, majorVersion, minorVersion);
 			securityManager = Managers.newSecurityManager(securityParams);
 			logger.trace("Creating connectivity manager.");
+			connectivityParams = new ConnectivityEngineParameters(connectivityExecutorService, connectivityCallback, connectivityTimeout, 
+					connectivityPingInterval);
 			connectivityManager = Managers.newConnectivityManager(connectivityParams);
 			logger.trace("Creating message manager.");
+			messagingParams = new MessageManagerParameters(numReceiveThreads, numSendThreads, getMessageSubParsers(), securityManager, 
+					connectivityManager, getMessageHandlers(), minorVersion, majorVersion);
 			messageManager = Managers.newMessageManager(messagingParams);		
 
 			try {
 				dbManager.initialize();
 				securityManager.initialize();
 				connectivityManager.initialize();
-				connectivityManager.setWatchdogThread(new ConnectivityWatchdogThread((OnClientTimeoutListener) connectivityManager));
+				ConnectivityWatchdogThread watchdog = new ConnectivityWatchdogThread((OnClientTimeoutListener) connectivityManager);
+				connectivityManager.setWatchdogThread(watchdog);
+				watchdog.start();
 				messageManager.initialize();
 			} catch(RuntimeException e) {
 				throw new InitializationException("Unexpected exception initializing subsystems.", e);
@@ -309,6 +331,13 @@ public class AutomateServer {
 		HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>> subParsers = 
 				new HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>>();
 		subParsers.put(MessageType.AUTHENTICATION.toString(), new ClientAuthenticationMessageSubParser());
+		subParsers.put(MessageType.NODE_LIST.toString(), new ClientNodeListMessageSubParser());
+		subParsers.put(MessageType.PING.toString(), new ClientPingMessageSubParser());
+		subParsers.put(MessageType.COMMAND_CLIENT.toString(), new ClientCommandMessageSubParser());
+		//subParsers.put(MessageType.COMMAND_NODE.toString(), new NodeCommandMessageSubParser());
+		subParsers.put(MessageType.STATUS_UPDATE_CLIENT.toString(), new ClientStatusUpdateMessageSubParser());
+		//subParsers.put(MessageType.STATUS_UPDATE_NODE.toString(), new NodeStatusUpdateMessageSubParser());
+		subParsers.put(MessageType.WARNING_CLIENT.toString(), new ClientWarningMessageSubParser());
 		return subParsers;
 	}
 
@@ -316,6 +345,16 @@ public class AutomateServer {
 		logger.trace("Configuring message handlers.");
 		HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers =
 				new HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>>();
+		handlers.put(MessageType.AUTHENTICATION, new AuthenticationMessageHandler(securityManager));
+		handlers.put(MessageType.NODE_LIST, new NodeListMessageHandler(dbManager, securityManager));
+		handlers.put(MessageType.PING, new PingMessageHandler(connectivityManager));
+		handlers.put(MessageType.COMMAND_CLIENT, new ClientCommandMessageHandler(dbManager, securityManager));
+		handlers.put(MessageType.COMMAND_NODE, new NodeCommandMessageHandler(dbManager, securityManager));
+		handlers.put(MessageType.STATUS_UPDATE_CLIENT, new ClientStatusUpdateMessageHandler(dbManager, securityManager));
+		handlers.put(MessageType.STATUS_UPDATE_NODE, new NodeStatusUpdateMessageHandler(dbManager, securityManager));
+		HashMap<Long, String> pendingWarnings = new HashMap<Long, String>();
+		handlers.put(MessageType.WARNING_CLIENT, new ClientWarningMessageHandler(pendingWarnings));
+		handlers.put(MessageType.WARNING_NODE, new NodeWarningMessageHandler(pendingWarnings, dbManager, securityManager));
 		return handlers;
 	}
 
@@ -336,13 +375,13 @@ public class AutomateServer {
 		if(!initialized) throw new IllegalStateException("Server not initialized!");
 		if(!running) {
 			try {
+				running = true;
 				logger.info("Starting server...");
 				dbManager.start();
 				securityManager.start();
 				connectivityManager.start();
 				messageManager.start();
 				logger.info("Server started.");
-				running = true;
 			} catch (Exception e) {
 				System.out.println("Error starting server");
 				e.printStackTrace();
@@ -360,10 +399,18 @@ public class AutomateServer {
 		if(running) {
 			try {
 				logger.info("Shutting down server...");
-				dbManager.terminate();
-				securityManager.terminate();
-				connectivityManager.terminate();
-				messageManager.terminate();
+				if(dbManager != null) {
+					dbManager.terminate();
+				}
+				if(securityManager != null) {
+					securityManager.terminate();
+				}
+				if(connectivityManager != null) {
+					connectivityManager.terminate();
+				}
+				if(messageManager != null) {
+					messageManager.terminate();
+				}
 				logger.info("Server shut down.");
 				running = false;
 			} catch (Exception e) {

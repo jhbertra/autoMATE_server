@@ -22,6 +22,8 @@ import com.automate.protocol.client.subParsers.ClientPingMessageSubParser;
 import com.automate.protocol.client.subParsers.ClientStatusUpdateMessageSubParser;
 import com.automate.protocol.client.subParsers.ClientWarningMessageSubParser;
 import com.automate.protocol.node.messages.NodeStatusUpdateMessage;
+import com.automate.protocol.node.subparsers.NodeCommandMessageSubParser;
+import com.automate.protocol.node.subparsers.NodeStatusUpdateMessageSubParser;
 import com.automate.server.connectivity.ConnectivityWatchdogThread;
 import com.automate.server.connectivity.ConnectivityWatchdogThread.OnClientTimeoutListener;
 import com.automate.server.connectivity.EngineCallback;
@@ -334,9 +336,9 @@ public class AutomateServer {
 		subParsers.put(MessageType.NODE_LIST.toString(), new ClientNodeListMessageSubParser());
 		subParsers.put(MessageType.PING.toString(), new ClientPingMessageSubParser());
 		subParsers.put(MessageType.COMMAND_CLIENT.toString(), new ClientCommandMessageSubParser());
-		//subParsers.put(MessageType.COMMAND_NODE.toString(), new NodeCommandMessageSubParser());
+		subParsers.put(MessageType.COMMAND_NODE.toString(), new NodeCommandMessageSubParser());
 		subParsers.put(MessageType.STATUS_UPDATE_CLIENT.toString(), new ClientStatusUpdateMessageSubParser());
-		//subParsers.put(MessageType.STATUS_UPDATE_NODE.toString(), new NodeStatusUpdateMessageSubParser());
+		subParsers.put(MessageType.STATUS_UPDATE_NODE.toString(), new NodeStatusUpdateMessageSubParser());
 		subParsers.put(MessageType.WARNING_CLIENT.toString(), new ClientWarningMessageSubParser());
 		return subParsers;
 	}

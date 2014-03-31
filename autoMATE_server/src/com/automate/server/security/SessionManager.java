@@ -107,13 +107,17 @@ public class SessionManager implements ISessionManager, EngineCallback {
 		if(clientSocket.isClosed()) {
 			throw new IllegalArgumentException("Closed socket passed to create new session.");
 		}
-		synchronized (lock) {			
-			if(connectedClients.containsKey(clientId)) {
-				System.out.println("User already connected");
-				return null;
+		synchronized (lock) {
+			String oldKey = connectedClients.get(clientId);
+			if(oldKey != null) {
+				SessionData data = activeSessions.get(oldKey);
+				if(data != null) {
+					System.out.println("User already connected");
+					return null;
+				}
 			}
 		}
-		String key = DigestUtils.md5Hex(clientId + ":" + clientSocket.getInetAddress().getHostAddress() + ":" + SALT + ":" + type);		
+		String key = DigestUtils.md5Hex(clientId + ":" + clientSocket.getInetAddress().getHostAddress() + ":" + SALT + ":" + type);
 		synchronized (lock) {
 			if(activeSessions.containsKey(key)) return null;
 			activeSessions.put(key, new SessionData(clientId, clientSocket, type));
@@ -259,9 +263,7 @@ public class SessionManager implements ISessionManager, EngineCallback {
 				oldData.references = -1; // flag that the data is not to be used anymore
 				try {
 					PrintWriter writer = new PrintWriter(oldData.socket.getOutputStream());
-					writer.println("EOF");
 					writer.close();
-					System.out.println("Socket EOF");
 				} catch (IOException e) {}
 				activeSessions.put(sessionKey, new SessionData(oldData.username, socket, oldData.clientType));
 				oldData.notify();
@@ -283,5 +285,6 @@ public class SessionManager implements ISessionManager, EngineCallback {
 			}
 		}
 	}
+
 
 }

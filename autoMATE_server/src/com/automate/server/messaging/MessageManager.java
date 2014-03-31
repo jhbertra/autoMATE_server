@@ -153,9 +153,6 @@ public class MessageManager implements IMessageManager {
 			Message<ServerProtocolParameters> responseMessage = handler.handleMessage(majorVersion, minorVersion, 
 					securityManager.validateParameters(message.getParameters()), message, getParameters(message, socket));
 			if(responseMessage != null) {
-				if(!message.getParameters().sessionKey.isEmpty() && !message.getParameters().sessionKey.equalsIgnoreCase("null")) {					
-					securityManager.updateSocket(message.getParameters().sessionKey, socket);
-				}
 				if(!responseMessage.getParameters().sessionKey.isEmpty()) {
 					sendMessage(responseMessage);
 				} else {

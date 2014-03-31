@@ -1,6 +1,6 @@
 package com.automate.server.messaging.handlers;
 
-import com.automate.protocol.Message;
+import com.automate.protocol.Message; 
 import com.automate.protocol.node.messages.NodeCommandMessage;
 import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.protocol.server.messages.ServerClientCommandMessage;

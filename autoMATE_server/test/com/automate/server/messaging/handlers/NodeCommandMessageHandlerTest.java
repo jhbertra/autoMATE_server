@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.automate.protocol.client.ClientProtocolParameters;
-import com.automate.protocol.node.messages.NodeCommandMessage;
+import com.automate.protocol.node.messages.SeverNodeCommandMessage;
 import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.protocol.server.messages.ServerClientCommandMessage;
 import com.automate.server.database.IDatabaseManager;
@@ -33,23 +33,23 @@ public class NodeCommandMessageHandlerTest {
 
 	@Test
 	public void testGetErrorMessage() {
-		assertNull(testAccess.getErrorMessage(1, 0, true, new NodeCommandMessage(parameters , 0, 200, "OK")));
+		assertNull(testAccess.getErrorMessage(1, 0, true, new SeverNodeCommandMessage(parameters , 0, 200, "OK")));
 	}
 
 	@Test
 	public void testGetOkMessage() {
 		ServerClientCommandMessage expected = new ServerClientCommandMessage(new ServerProtocolParameters(1, 0, true, "session"), 0, 200, "OK");
-		assertEquals(expected, testAccess.getOkMessage(1, 0, true, new NodeCommandMessage(parameters , 0, 200, "OK"), "session"));
+		assertEquals(expected, testAccess.getOkMessage(1, 0, true, new SeverNodeCommandMessage(parameters , 0, 200, "OK"), "session"));
 	}
 
 	@Test
 	public void testGetUserNotFoundMessage() {
-		assertNull(testAccess.getUserNotFoundMessage(1, 0, true, new NodeCommandMessage(parameters , 0, 200, "OK")));
+		assertNull(testAccess.getUserNotFoundMessage(1, 0, true, new SeverNodeCommandMessage(parameters , 0, 200, "OK")));
 	}
 
 	@Test
 	public void testGetUserOfflineMessage() {
-		assertNull(testAccess.getUserOfflineMessage(1, 0, true, new NodeCommandMessage(parameters , 0, 200, "OK")));
+		assertNull(testAccess.getUserOfflineMessage(1, 0, true, new SeverNodeCommandMessage(parameters , 0, 200, "OK")));
 	}
 
 }

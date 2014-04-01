@@ -33,14 +33,14 @@ public class NodeWarningMessageHandler extends NodeToClientMessageHandler<NodeWa
 
 	@Override
 	protected Message<ServerProtocolParameters> getOkMessage(int majorVersion,int minorVersion, boolean sessionValid, 
-			NodeWarningMessage message, String sessionKey) {
+			NodeWarningMessage message, String sessionKey, long nodeId) {
 		long warningId;
 		synchronized (pendingWarnings) {
 			warningId = nextWarningId++;
 			pendingWarnings.put(warningId, message.message);
 		}
 		return new ServerClientWarningMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, sessionKey), 
-				warningId, message.nodeId, message.message);
+				warningId, nodeId, message.message);
 	}
 
 	@Override

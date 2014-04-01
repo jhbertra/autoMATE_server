@@ -51,7 +51,7 @@ implements IMessageHandler<M, Void> {
 					if(sessionKey == null) {
 						return getUserOfflineMessage(majorVersion, minorVersion, sessionValid, message);
 					} else {
-						return getOkMessage(majorVersion, minorVersion, sessionValid, message, sessionKey);
+						return getOkMessage(majorVersion, minorVersion, sessionValid, message, sessionKey, nodeId);
 					}
 				}
 			}
@@ -64,7 +64,7 @@ implements IMessageHandler<M, Void> {
 
 	protected abstract Message<ServerProtocolParameters> getErrorMessage(int majorVersion, int minorVersion, boolean sessionValid, M message);
 
-	protected abstract Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid, M message, String sessionKey);
+	protected abstract Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid, M message, String sessionKey, long nodeId);
 
 	protected abstract Message<ServerProtocolParameters> getUserNotFoundMessage(int majorVersion, int minorVersion, boolean sessionValid, M message);
 
@@ -78,8 +78,8 @@ implements IMessageHandler<M, Void> {
 			return NodeToClientMessageHandler.this.getErrorMessage(majorVersion, minorVersion, sessionValid, message);
 		}
 
-		public Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid, M message, String sessionKey) {
-			return NodeToClientMessageHandler.this.getOkMessage(majorVersion, minorVersion, sessionValid, message, sessionKey);
+		public Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid, M message, String sessionKey, long nodeId) {
+			return NodeToClientMessageHandler.this.getOkMessage(majorVersion, minorVersion, sessionValid, message, sessionKey, nodeId);
 		}
 
 		public Message<ServerProtocolParameters> getUserNotFoundMessage(int majorVersion, int minorVersion, boolean sessionValid, M message) {

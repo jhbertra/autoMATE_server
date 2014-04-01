@@ -27,9 +27,9 @@ public class NodeStatusUpdateMessageHandler extends NodeToClientMessageHandler<N
 
 	@Override
 	protected Message<ServerProtocolParameters> getOkMessage(int majorVersion, int minorVersion, boolean sessionValid,
-			NodeStatusUpdateMessage message, String sessionKey) {
+			NodeStatusUpdateMessage message, String sessionKey, long nodeId) {
 		return new ServerClientStatusUpdateMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, sessionKey),
-				message.nodeId, message.statuses);
+				nodeId, message.statuses);
 	}
 
 	@Override

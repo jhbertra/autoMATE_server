@@ -27,7 +27,7 @@ public class NodeCommandMessageHandler extends NodeToClientMessageHandler<NodeCo
 
 	@Override
 	protected Message<ServerProtocolParameters> getOkMessage(int majorVersion,int minorVersion, boolean sessionValid, 
-			NodeCommandMessage message, String sessionKey) {
+			NodeCommandMessage message, String sessionKey, long nodeId) {
 		return new ServerClientCommandMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, sessionKey), 
 				message.commandId, message.responseCode, message.message);
 	}

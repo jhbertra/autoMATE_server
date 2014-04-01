@@ -79,6 +79,7 @@ public class SecurityManagerImpl implements ISecurityManager {
 			long nodeId = Long.parseLong(username.substring(1));
 			Node node = dbManager.getNodeByUid(nodeId);
 			if(node == null) {
+				System.out.println("node not in database.");
 				return null;
 			}
 			if((sessionKey == null || sessionKey.isEmpty() || sessionKey.equalsIgnoreCase("null")) && password.equals("quinoa128")) {

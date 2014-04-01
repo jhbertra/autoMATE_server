@@ -119,7 +119,10 @@ public class SessionManager implements ISessionManager, EngineCallback {
 		}
 		String key = DigestUtils.md5Hex(clientId + ":" + clientSocket.getInetAddress().getHostAddress() + ":" + SALT + ":" + type);
 		synchronized (lock) {
-			if(activeSessions.containsKey(key)) return null;
+			if(activeSessions.containsKey(key)) {
+				System.out.println("Key already in active sessions: " + key);
+				return null;
+			}
 			activeSessions.put(key, new SessionData(clientId, clientSocket, type));
 			connectedClients.put(clientId, key);
 		}

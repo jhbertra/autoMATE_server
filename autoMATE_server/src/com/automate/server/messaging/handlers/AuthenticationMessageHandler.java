@@ -50,9 +50,14 @@ public class AuthenticationMessageHandler implements IMessageHandler<ClientAuthe
 			throw new NullPointerException("params was null.");
 		}
 		try {
-			System.out.println("Handling Authentication message " + message.username + " " + message.password);
-			String sessionKey = securityManager.authenticateClient(message.username, 
-					message.password, message.getParameters().sessionKey, params.clientSocket);
+			String sessionKey;
+			if(message.username.startsWith("$")) {
+				sessionKey = securityManager.authenticateNode(message.username, 
+						message.password, message.getParameters().sessionKey, params.clientSocket);
+			} else {
+				sessionKey = securityManager.authenticateClient(message.username, 
+						message.password, message.getParameters().sessionKey, params.clientSocket);
+			}
 			if(sessionKey != null && !sessionKey.isEmpty()) {
 				System.out.println("Authentication successful!");
 				return new ServerAuthenticationMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, sessionKey), 

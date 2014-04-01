@@ -176,7 +176,8 @@ public class MessageManager implements IMessageManager {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error handling received message.", e);
+			logger.error("Error handling received message.");
+			e.printStackTrace();
 		}
 	}
 

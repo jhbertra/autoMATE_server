@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.server.InitializationException;
 import com.automate.server.database.IDatabaseManager;
+import com.automate.server.database.models.Node;
 import com.automate.server.database.models.User;
 
 /**
@@ -62,13 +63,40 @@ public class SecurityManagerImpl implements ISecurityManager {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see com.automate.server.security.ISecurityManager#authenticateNode(java.lang.String, java.lang.String, java.lang.String, java.net.Socket)
+	 */
 	@Override
-	public String authenticateClient(String username, String password, String sessionKey, Socket socekt) {
+	public String authenticateNode(String username, String password, String sessionKey, Socket socket) {
 		if(username == null) {
 			throw new NullPointerException("username was null.");
 		} else if(password == null) {
 			throw new NullPointerException("password was null.");
-		} else if(socekt == null) {
+		} else if(socket == null) {
+			throw new NullPointerException("socket was null.");
+		}
+		try {
+			long nodeId = Long.parseLong(username.substring(1));
+			Node node = dbManager.getNodeByUid(nodeId);
+			if(node == null) {
+				return null;
+			}
+			if((sessionKey == null || sessionKey.isEmpty() || sessionKey.equalsIgnoreCase("null")) && password.equals("quinoa128")) {
+				return sessionManager.createNewNodeSession(nodeId, socket);
+			}
+		} catch(Exception e) {
+			logger.error("Error authenticating node" + username + ".", e);
+		}
+		return null;
+	}
+
+	@Override
+	public String authenticateClient(String username, String password, String sessionKey, Socket socket) {
+		if(username == null) {
+			throw new NullPointerException("username was null.");
+		} else if(password == null) {
+			throw new NullPointerException("password was null.");
+		} else if(socket == null) {
 			throw new NullPointerException("socket was null.");
 		}
 		try {
@@ -77,7 +105,7 @@ public class SecurityManagerImpl implements ISecurityManager {
 				return null;
 			}
 			if((sessionKey == null || sessionKey.isEmpty() || sessionKey.equalsIgnoreCase("null")) && user.password.equals(password)) {
-				return sessionManager.createNewAppSession(username, socekt);
+				return sessionManager.createNewAppSession(username, socket);
 			}
 		} catch(Exception e) {
 			logger.error("Error authenticating client" + username + ".", e);

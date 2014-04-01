@@ -85,6 +85,6 @@ public interface ISecurityManager extends IManager {
 
 	void updateSocket(String sessionKey, Socket socket);
 
-
+	public String authenticateNode(String username, String password, String sessionKey, Socket clientSocket);
 	
 }

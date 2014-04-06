@@ -1,6 +1,6 @@
 package com.automate.server;
 
-import java.sql.Connection;
+import java.sql.Connection; 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Properties;
@@ -18,10 +18,11 @@ import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.protocol.client.subParsers.ClientAuthenticationMessageSubParser;
 import com.automate.protocol.client.subParsers.ClientCommandMessageSubParser;
 import com.automate.protocol.client.subParsers.ClientNodeListMessageSubParser;
+import com.automate.protocol.client.subParsers.ClientNodeRegistrationMessageSubParser;
 import com.automate.protocol.client.subParsers.ClientPingMessageSubParser;
+import com.automate.protocol.client.subParsers.ClientRegistrationMessageSubParser;
 import com.automate.protocol.client.subParsers.ClientStatusUpdateMessageSubParser;
 import com.automate.protocol.client.subParsers.ClientWarningMessageSubParser;
-import com.automate.protocol.node.messages.NodeStatusUpdateMessage;
 import com.automate.protocol.node.subparsers.NodeCommandMessageSubParser;
 import com.automate.protocol.node.subparsers.NodeStatusUpdateMessageSubParser;
 import com.automate.server.connectivity.ConnectivityWatchdogThread;
@@ -38,9 +39,11 @@ import com.automate.server.messaging.handlers.ClientWarningMessageHandler;
 import com.automate.server.messaging.handlers.IMessageHandler;
 import com.automate.server.messaging.handlers.NodeCommandMessageHandler;
 import com.automate.server.messaging.handlers.NodeListMessageHandler;
+import com.automate.server.messaging.handlers.NodeRegistrationMessageHandler;
 import com.automate.server.messaging.handlers.NodeStatusUpdateMessageHandler;
 import com.automate.server.messaging.handlers.NodeWarningMessageHandler;
 import com.automate.server.messaging.handlers.PingMessageHandler;
+import com.automate.server.messaging.handlers.RegistrationMessageHandler;
 import com.automate.server.security.ISecurityManager;
 import com.automate.server.security.ISessionManager;
 import com.automate.server.security.SessionManager;
@@ -333,6 +336,7 @@ public class AutomateServer {
 		HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>> subParsers = 
 				new HashMap<String, MessageSubParser<? extends Message<ClientProtocolParameters>,ClientProtocolParameters>>();
 		subParsers.put(MessageType.AUTHENTICATION.toString(), new ClientAuthenticationMessageSubParser());
+		subParsers.put(MessageType.REGISTRATION.toString(), new ClientRegistrationMessageSubParser());
 		subParsers.put(MessageType.NODE_LIST.toString(), new ClientNodeListMessageSubParser());
 		subParsers.put(MessageType.PING.toString(), new ClientPingMessageSubParser());
 		subParsers.put(MessageType.COMMAND_CLIENT.toString(), new ClientCommandMessageSubParser());
@@ -340,6 +344,7 @@ public class AutomateServer {
 		subParsers.put(MessageType.STATUS_UPDATE_CLIENT.toString(), new ClientStatusUpdateMessageSubParser());
 		subParsers.put(MessageType.STATUS_UPDATE_NODE.toString(), new NodeStatusUpdateMessageSubParser());
 		subParsers.put(MessageType.WARNING_CLIENT.toString(), new ClientWarningMessageSubParser());
+		subParsers.put(MessageType.REGISTER_NODE.toString(), new ClientNodeRegistrationMessageSubParser());
 		return subParsers;
 	}
 
@@ -348,6 +353,7 @@ public class AutomateServer {
 		HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>> handlers =
 				new HashMap<MessageType, IMessageHandler<? extends Message<ClientProtocolParameters>, ?>>();
 		handlers.put(MessageType.AUTHENTICATION, new AuthenticationMessageHandler(securityManager));
+		handlers.put(MessageType.REGISTRATION, new RegistrationMessageHandler(securityManager));
 		handlers.put(MessageType.NODE_LIST, new NodeListMessageHandler(dbManager, securityManager));
 		handlers.put(MessageType.PING, new PingMessageHandler(connectivityManager));
 		handlers.put(MessageType.COMMAND_CLIENT, new ClientCommandMessageHandler(dbManager, securityManager));
@@ -357,6 +363,7 @@ public class AutomateServer {
 		HashMap<Long, String> pendingWarnings = new HashMap<Long, String>();
 		handlers.put(MessageType.WARNING_CLIENT, new ClientWarningMessageHandler(pendingWarnings));
 		handlers.put(MessageType.WARNING_NODE, new NodeWarningMessageHandler(pendingWarnings, dbManager, securityManager));
+		handlers.put(MessageType.REGISTER_NODE, new NodeRegistrationMessageHandler(securityManager));
 		return handlers;
 	}
 

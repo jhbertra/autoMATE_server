@@ -184,6 +184,7 @@ public class MessageManager implements IMessageManager {
 	private Object getParameters(Message<ClientProtocolParameters> message, Socket socket) {
 		switch (message.getMessageType()) {
 		case AUTHENTICATION:
+		case REGISTRATION:
 			return new AuthenticationMessageHandlerParams(socket);
 		case COMMAND_CLIENT:
 			long nodeId = ((ClientCommandMessage)message).nodeId;

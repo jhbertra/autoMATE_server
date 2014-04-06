@@ -1,6 +1,6 @@
 package com.automate.server.database;
 
-//import java.beans.Statement;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.automate.server.InitializationException;
+import com.automate.server.commandLine.GrammarFile.State;
 import com.automate.server.database.models.Node;
 import com.automate.server.database.models.Manufacturer;
 import com.automate.server.database.models.Model;
@@ -198,6 +199,65 @@ public class DatabaseManager implements IDatabaseManager {
 	}
 
 	@Override
+	public User addUser(String username, String password, String name, String email) {
+		if(username == null) {
+			throw new NullPointerException("username is null.");
+		} else if(password == null) {
+			throw new NullPointerException("password is null.");
+		} else if(name == null) {
+			throw new NullPointerException("name is null.");
+		} else if(email == null) {
+			throw new NullPointerException("email is null.");
+		}
+		
+		int spaceIndex = name.indexOf(" ");
+		String firstName = null;
+		String lastName = "";
+		if(spaceIndex != -1) {
+			firstName = name.substring(0, spaceIndex);
+			lastName = name.substring(spaceIndex + 1);
+		} else {
+			firstName = name;
+		}
+		
+		try {
+			String query = "INSERT INTO `automate`.`USER`"
+					+ "(`username`,"
+					+ "`first_name`,"
+					+ "`last_name`,"
+					+ "`password`,"
+					+ "`email`)"
+					+ "VALUE"
+					+ "(?,"
+					+ "?,"
+					+ "?,"
+					+ "?,"
+					+ "?);";
+			PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			statement.setString(1, username);
+			statement.setString(2, firstName);
+			statement.setString(3, lastName);
+			statement.setString(4, password);
+			statement.setString(5, email);
+			
+			int affectedRows = statement.executeUpdate();
+			if(affectedRows == 0) {
+				return null;
+			}
+			
+			ResultSet generatedKeys = statement.getGeneratedKeys();
+			if(generatedKeys.next()) {
+				return new User(generatedKeys.getLong(1), username, firstName, lastName, password, email);
+			} else {
+				return null;
+			}
+		} catch (SQLException e) {
+			logger.error("Error in addUser.", e);
+			return null;
+		}
+	}
+
+	@Override
 	public void initialize() throws InitializationException {
 	}
 
@@ -209,6 +269,47 @@ public class DatabaseManager implements IDatabaseManager {
 	public void terminate() throws Exception {
 		logger.info("Shutting down database manager...");
 		connection.close();
+	}
+
+	@Override
+	public Node addNode(String maxVersion, long modelId, String name, long userId) {
+		if(modelId < 0) {
+			throw new IllegalArgumentException("modelId is invalid.");
+		} else if(userId < 0) {
+			throw new IllegalArgumentException("userId is invalid.");
+		} else if(maxVersion == null) {
+			throw new NullPointerException("max version is null.");
+		}
+		
+		try {
+			String query = "INSERT INTO `automate`.`NODE`"
+					+ "(`user_id`,"
+					+ "`model_id`,"
+					+ "`name`,"
+					+ "`max_version`)"
+					+ "VALUE"
+					+ "(?,"
+					+ "?,"
+					+ "?,"
+					+"?);";
+			PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			statement.setLong(1, userId);
+			statement.setLong(2, modelId);
+			statement.setString(3, name);
+			statement.setString(3, maxVersion);
+			int affectedRows = statement.executeUpdate();
+			if(affectedRows == 0) return null;
+			
+			ResultSet generatedKeys = statement.getGeneratedKeys();
+			if(generatedKeys.next()) {
+				return new Node(generatedKeys.getLong(1), name, userId, modelId, maxVersion);
+			} else {
+				return null;
+			}
+		} catch(SQLException e) {
+			logger.error("Error in addUser.", e);
+			return null;
+		}
 	}
 
 }

@@ -1,11 +1,9 @@
 package com.automate.server.security;
 
 
-import java.net.Socket;
+import java.net.Socket; 
 
-import com.automate.protocol.Message;
 import com.automate.protocol.client.ClientProtocolParameters;
-import com.automate.protocol.server.ServerProtocolParameters;
 import com.automate.server.IManager;
 
 /**
@@ -86,5 +84,11 @@ public interface ISecurityManager extends IManager {
 	void updateSocket(String sessionKey, Socket socket);
 
 	public String authenticateNode(String username, String password, String sessionKey, Socket clientSocket);
+
+	public int registerNewUser(String username, String password, String name, String email);
+
+	public long registerNodeForUser(String maxVersion, long modelId, String name, String username);
+
+	public String generateNodePassword(long nodeId);
 	
 }

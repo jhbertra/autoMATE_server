@@ -1,13 +1,15 @@
 package com.automate.server.security;
 
-import java.net.Socket;
+import java.net.Socket; 
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.automate.protocol.client.ClientProtocolParameters;
 import com.automate.server.InitializationException;
 import com.automate.server.database.IDatabaseManager;
+import com.automate.server.database.models.Model;
 import com.automate.server.database.models.Node;
 import com.automate.server.database.models.User;
 
@@ -25,6 +27,8 @@ public class SecurityManagerImpl implements ISecurityManager {
 	private int minorVersion;
 
 	private static final Logger logger = LogManager.getLogger();
+	
+	private static final String SALT = "E47doFVRgNw1xX9a";
 	
 	/**
 	 * Creates a new SecurityManagerImpl
@@ -82,7 +86,8 @@ public class SecurityManagerImpl implements ISecurityManager {
 				System.out.println("node not in database.");
 				return null;
 			}
-			if((sessionKey == null || sessionKey.isEmpty() || sessionKey.equalsIgnoreCase("null")) && password.equals("quinoa128")) {
+			String validPassword = generateNodePassword(nodeId);
+			if((sessionKey == null || sessionKey.isEmpty() || sessionKey.equalsIgnoreCase("null")) && password.equals(validPassword)) {
 				return sessionManager.createNewNodeSession(nodeId, socket);
 			}
 		} catch(Exception e) {
@@ -112,6 +117,33 @@ public class SecurityManagerImpl implements ISecurityManager {
 			logger.error("Error authenticating client" + username + ".", e);
 		}
 		return null;
+	}
+
+	@Override
+	public int registerNewUser(String username, String password, String name, String email) {
+		User user = dbManager.getUserByUsername(username);
+		if(user != null) return 401;
+		user = dbManager.addUser(username, password, name, email);
+		if(user != null) return 200;
+		else return 500;
+	}
+
+	@Override
+	public long registerNodeForUser(String maxVersion, long modelId, String name, String username) {
+		Model model = dbManager.getModelByUid(modelId);
+		if(model == null) return -1;
+		User user = dbManager.getUserByUsername(username);
+		Node node = dbManager.addNode(maxVersion, modelId, name, user.uid);
+		if(node == null) return -1;
+		return node.uid;
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.automate.server.security.ISecurityManager#generateNodePassword(long)
+	 */
+	@Override
+	public String generateNodePassword(long nodeId) {
+		return DigestUtils.md5Hex(nodeId + ":" + SALT);
 	}
 
 	@Override

@@ -39,4 +39,8 @@ public interface IDatabaseManager extends IManager {
 	 */
 	Manufacturer getManufacturerByUid(long manufacturerId);
 	
+	User addUser(String username, String password, String name, String email);
+	
+	Node addNode(String maxVersion, long modelId, String name, long userId);
+	
 }

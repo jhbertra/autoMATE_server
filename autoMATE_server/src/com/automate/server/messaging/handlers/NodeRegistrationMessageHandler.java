@@ -28,12 +28,15 @@ public class NodeRegistrationMessageHandler implements
 			throw new NullPointerException("message was null.");
 		}
 		String username = securityManager.getUsername(message.getParameters().sessionKey);
+		System.out.println("Username: " + username);
 		long nodeId = -1;
 		String password = null;
 		if(username != null) {
 			nodeId = securityManager.registerNodeForUser(message.maxVersion, message.modelId, message.name, username);
+			System.out.println("NodeId: " + nodeId);
 			if(nodeId != -1) {
 				password = securityManager.generateNodePassword(nodeId);
+				System.out.println("Password: " + password);
 			}
 		}
 		return new ServerNodeRegistrationMessage(new ServerProtocolParameters(majorVersion, minorVersion, sessionValid, 

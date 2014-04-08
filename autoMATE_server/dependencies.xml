@@ -7,6 +7,11 @@
 		depends="depend.protocol">
 		<ant dir="../autoMATE_server" inheritall="false"/>
 	</target>
+
+	<target name="depend.node"
+		depends="depend.protocol">
+		<ant dir="../../autoMATE_node/autoMATE_node" inheritall="false"/>
+	</target>
 	
 	<target name="depend.protocol">
 		<ant dir="../../autoMATE_protocol/autoMATE_protocol" inheritall="false"/>

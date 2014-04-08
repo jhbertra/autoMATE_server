@@ -131,9 +131,12 @@ public class SecurityManagerImpl implements ISecurityManager {
 	@Override
 	public long registerNodeForUser(String maxVersion, long modelId, String name, String username) {
 		Model model = dbManager.getModelByUid(modelId);
+		System.out.println("Model: " + model);
 		if(model == null) return -1;
 		User user = dbManager.getUserByUsername(username);
+		System.out.println("User: " + user);
 		Node node = dbManager.addNode(maxVersion, modelId, name, user.uid);
+		System.out.println("node: " + node);
 		if(node == null) return -1;
 		return node.uid;
 	}

@@ -296,7 +296,7 @@ public class DatabaseManager implements IDatabaseManager {
 			statement.setLong(1, userId);
 			statement.setLong(2, modelId);
 			statement.setString(3, name);
-			statement.setString(3, maxVersion);
+			statement.setString(4, maxVersion);
 			int affectedRows = statement.executeUpdate();
 			if(affectedRows == 0) return null;
 			
@@ -307,7 +307,7 @@ public class DatabaseManager implements IDatabaseManager {
 				return null;
 			}
 		} catch(SQLException e) {
-			logger.error("Error in addUser.", e);
+			logger.error("Error in addNode.", e);
 			return null;
 		}
 	}
